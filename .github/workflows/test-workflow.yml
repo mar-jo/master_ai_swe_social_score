@@ -24,7 +24,7 @@ jobs:
 
     - name: Run tests
       run: |
-        python -m unittest discover -s tests  # Run tests from the 'tests' directory
+        python -m unittest discover -s SocialScores  # Run tests from the 'SocialScores' directory
 
     - name: Upload test results (optional)
       if: always()
