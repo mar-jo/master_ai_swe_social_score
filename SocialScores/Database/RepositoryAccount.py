@@ -8,6 +8,10 @@ def convert_account_to_dict(account: Account) -> dict:
 
 table_name = 'accounts'
 
+columns = {
+    'username': 'TEXT'
+}
+
 class RepositoryAccount:
     def __init__(self, database: Database):
         self.database = database

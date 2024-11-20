@@ -1,5 +1,5 @@
 from Database.DatabaseFactory import DatabaseFactory
-from Database.RepositoryAccount import RepositoryAccount, table_name as account_table_name
+from Database.RepositoryAccount import RepositoryAccount, table_name as account_table_name, columns as account_columns
 from Models.account import Account
 
 
@@ -14,7 +14,7 @@ database_type = 'sqlite'
 database_factory = DatabaseFactory()
 database = database_factory.create(database_type, 'Database/test.db') # returns an instance of SQLiteDatabase
 database.connect()
-database.create_table(account_table_name, {'username': 'TEXT'})
+database.create_table(account_table_name, account_columns)
 
 testAccount = Account('test')
 RepositoryAccount(database).add_account(testAccount)
