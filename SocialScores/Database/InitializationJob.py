@@ -11,8 +11,17 @@ def start():
 
     database.connect()
 
+    drop_all(database)
+    create_all(database)
+    populate(database)
+
+def drop_all(database):
+    database.execute(f"DROP TABLE IF EXISTS {account_table_name}")
+
+def create_all(database):
     database.create_table(account_table_name, account_columns)
 
+def populate(database):
     testAccount = Account('test')
     RepositoryAccount(database).add_account(testAccount)
     print('succesfully added account')
