@@ -1,5 +1,5 @@
-import Database as Database
-import Models.Post as Post
+import SocialScores.Database as Database
+import SocialScores.Models.post as Post
 
 def convert_post_to_dict(post: Post) -> dict:
     return {

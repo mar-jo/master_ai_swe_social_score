@@ -1,5 +1,5 @@
-import Models.account as Account
-import Database as Database
+import SocialScores.Models.account as Account
+import SocialScores.Database as Database
 
 def convert_account_to_dict(account: Account) -> dict:
     return {

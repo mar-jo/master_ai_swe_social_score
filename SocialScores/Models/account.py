@@ -1,4 +1,10 @@
+from pydantic import BaseModel
 
-class Account:
-    def __init__(self, username):
-        self.username = username
+class AccountCreate(BaseModel):
+    username: str
+
+class AccountResponse(AccountCreate):
+    id: int
+
+    class Config:
+        orm_mode = True

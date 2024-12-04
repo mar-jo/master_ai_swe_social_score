@@ -1,24 +1,15 @@
-from Database.DatabaseFactory import DatabaseFactory
-from Database.RepositoryAccount import RepositoryAccount, table_name as account_table_name, columns as account_columns
-from Models.account import Account
+from fastapi import FastAPI
+from starlette.responses import FileResponse
+from SocialScores.Controllers import account_controller, post_controller
+from SocialScores.Database.DatabaseFactory import DatabaseFactory
 
+app = FastAPI()
 
-def hello_world():
-    return "Hello, World!"
+# Include API routes
+app.include_router(account_controller.router, prefix="/api/v1/accounts", tags=["Accounts"])
+app.include_router(post_controller.router, prefix="/api/v1/posts", tags=["Posts"])
 
-print(hello_world())
-
-import Database.DatabaseFactory
-
-database_type = 'sqlite'
-database_factory = DatabaseFactory()
-database = database_factory.create(database_type, 'Database/test.db') # returns an instance of SQLiteDatabase
-database.connect()
-database.create_table(account_table_name, account_columns)
-
-testAccount = Account('test')
-RepositoryAccount(database).add_account(testAccount)
-print('succesfully added account')
-
-readAccount = RepositoryAccount(database).get_account('test')
-print('found account with username: ' + readAccount[0])
+# Serve OpenAPI definition if needed
+@app.get("/openapi.json")
+def get_openapi_definition():
+    return FileResponse("SocialScores/openapi.json")
