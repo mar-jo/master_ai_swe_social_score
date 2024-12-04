@@ -24,7 +24,7 @@ class RepositoryPosts:
         self.database.insert(table_name, convert_post_to_dict(post))
 
     def get_post(self, id):
-        return self.database.fetchone(f"SELECT * FROM {table_name} WHERE id = ?", (id,))
+        return self.database.fetchone(f"SELECT * FROM {table_name} WHERE id = %s", (id,))
 
     def get_all_posts(self):
         return self.database.fetchall(f"SELECT * FROM {table_name}")
@@ -33,4 +33,4 @@ class RepositoryPosts:
     #    self.database.update_post(post)
 
     def delete_post(self, id):
-        self.database.delete(table_name, "id = ?", (id,))
+        self.database.delete(table_name, "id = %s", (id,))

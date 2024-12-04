@@ -20,7 +20,7 @@ class RepositoryAccount:
         self.database.insert(table_name, convert_account_to_dict(account))
 
     def get_account(self, username):
-        return self.database.fetchone(f"SELECT * FROM {table_name} WHERE username = ?", (username,))
+        return self.database.fetchone(f"SELECT * FROM {table_name} WHERE username = %s", (username,))
 
     def get_all_accounts(self):
         return self.database.fetchall(f"SELECT * FROM {table_name}")
@@ -29,5 +29,5 @@ class RepositoryAccount:
     #    self.database.update_account(account)
 
     def delete_account(self, username):
-        self.database.delete(table_name, "username = ?", (username,))
+        self.database.delete(table_name, "username = %s", (username,))
 
