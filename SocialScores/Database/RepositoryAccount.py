@@ -1,33 +1,64 @@
-import Models.account as Account
-import Database as Database
+from sqlalchemy.orm import Session
+from SocialScores.Models.Account import Account
+from passlib.hash import bcrypt
 
-def convert_account_to_dict(account: Account) -> dict:
-    return {
-        'username': account.username
-    }
-
-table_name = 'accounts'
-
+table_name = "accounts"
 columns = {
-    'username': 'TEXT'
+    "id": "SERIAL PRIMARY KEY",
+    "email": "VARCHAR(255) UNIQUE NOT NULL",
+    "username": "VARCHAR(255) UNIQUE NOT NULL",
+    "password": "VARCHAR(255) NOT NULL",
+    "socialscore": "INTEGER DEFAULT 0",
 }
 
 class RepositoryAccount:
-    def __init__(self, database: Database):
-        self.database = database
+    def __init__(self, db: Session):
+        self.db = db
 
-    def add_account(self, account : Account):
-        self.database.insert(table_name, convert_account_to_dict(account))
+    def add_account(self, account_data: dict):
+        """
+        Add an account directly from a dictionary (for test data initialization).
+        """
+        hashed_password = bcrypt.hash(account_data["password"])
+        new_account = Account(
+            email=account_data["email"],
+            username=account_data["username"],
+            password=hashed_password,
+        )
+        self.db.add(new_account)
+        self.db.commit()
+        self.db.refresh(new_account)
+        return new_account
 
-    def get_account(self, username):
-        return self.database.fetchone(f"SELECT * FROM {table_name} WHERE username = %s", (username,))
+    def create_account(self, email: str, username: str, password: str):
+        """
+        Create an account with validation checks.
+        """
+        # Check if the email or username is already taken
+        if self.db.query(Account).filter_by(email=email).first():
+            raise ValueError("Email already registered")
+        if self.db.query(Account).filter_by(username=username).first():
+            raise ValueError("Username already taken")
 
-    def get_all_accounts(self):
-        return self.database.fetchall(f"SELECT * FROM {table_name}")
+        # Hash the password and create a new account
+        hashed_password = bcrypt.hash(password)
+        new_account = Account(email=email, username=username, password=hashed_password)
+        self.db.add(new_account)
+        self.db.commit()
+        self.db.refresh(new_account)
+        return new_account
 
-    #def update_account(self, account):
-    #    self.database.update_account(account)
+    def get_account_by_email(self, email: str):
+        return self.db.query(Account).filter_by(email=email).first()
 
-    def delete_account(self, username):
-        self.database.delete(table_name, "username = %s", (username,))
+    def get_account_by_username(self, username: str):
+        return self.db.query(Account).filter_by(username=username).first()
 
+    def validate_login(self, username: str, password: str):
+        """
+        Validate login credentials.
+        """
+        account = self.db.query(Account).filter_by(username=username).first()
+        if account and bcrypt.verify(password, account.password):  # Verify hashed password
+            return account
+        raise ValueError("Invalid username or password")

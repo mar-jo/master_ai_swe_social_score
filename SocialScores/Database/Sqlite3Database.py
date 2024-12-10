@@ -1,7 +1,7 @@
 import sqlite3
 
 from typing import List, Dict, Tuple
-from Database.DatabaseBase import Database
+from SocialScores.Database.DatabaseBase import Database
 
 class SQLiteDatabase(Database):
     def __init__(self, db_name: str):

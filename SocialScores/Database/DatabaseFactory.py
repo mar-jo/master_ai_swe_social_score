@@ -1,5 +1,5 @@
-from Database.Sqlite3Database import SQLiteDatabase
-from Database.PostgreDatabase import PostgresDatabase
+from SocialScores.Database.Sqlite3Database import SQLiteDatabase
+from SocialScores.Database.PostgreDatabase import PostgresDatabase
 
 
 class DatabaseFactory:

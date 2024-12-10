@@ -1,21 +1,25 @@
-from Database.DatabaseFactory import DatabaseFactory
-from Database.RepositoryAccount import RepositoryAccount, table_name as account_table_name, columns as account_columns
-from Models.account import Account
+from sqlalchemy import create_engine
+from SocialScores.Models.Account import Base as AccountBase
+from SocialScores.Models.Post import Base as PostBase
 
 database_engine = 'postgres'
-connection_string = 'dbname=socialscores user=postgres password=Test1234 host=localhost port=5432'
+connection_string = 'postgresql://postgres:admin@database:5432/socialscores'  # Use full connection URL
+
 
 def start():
-    db_factory = DatabaseFactory()
-    database = db_factory.create(database_engine, connection_string)
+    """
+    Initialize the database by creating required tables using SQLAlchemy's Base.metadata.create_all()
+    """
+    print("Connecting to the database...")
+    engine = create_engine(connection_string)
 
-    database.connect()
-
-    database.create_table(account_table_name, account_columns)
-
-    testAccount = Account('test')
-    RepositoryAccount(database).add_account(testAccount)
-    print('succesfully added account')
-
-    readAccount = RepositoryAccount(database).get_account('test')
-    print('found account with username: ' + readAccount[0])
+    try:
+        print("Creating tables...")
+        # Create all tables defined in the ORM models
+        AccountBase.metadata.create_all(engine)
+        PostBase.metadata.create_all(engine)
+        print("Tables created successfully.")
+    except Exception as e:
+        print(f"Error creating tables: {e}")
+    finally:
+        print("Database initialization complete.")
