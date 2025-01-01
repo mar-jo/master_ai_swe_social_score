@@ -1,49 +1,40 @@
-from fastapi import APIRouter, UploadFile, HTTPException
-from fastapi.responses import FileResponse
-import shutil
-from pathlib import Path
+from fastapi import APIRouter, Depends, UploadFile, HTTPException
+from sqlalchemy.orm import Session
+from SocialScores.Database.RepositoryImage import RepositoryImage
+from SocialScores.Database.Database import get_db
 
-UPLOAD_FOLDER = "uploads"
+class ImageController:
+    def __init__(self, db: Session):
+        self.repo = RepositoryImage(db)
 
-# Ensure the upload directory exists
-upload_path = Path(UPLOAD_FOLDER)
-if not upload_path.exists():
-    upload_path.mkdir(parents=True, exist_ok=True)
+    def add_image(self, filename: str, file_path: str, uploader: str):
+        return self.repo.add_image(filename=filename, file_path=file_path, uploader=uploader)
 
-# Create a router for the ImageController
+    def get_image_by_id(self, image_id: int):
+        image = self.repo.get_image_by_id(image_id)
+        if not image:
+            raise HTTPException(status_code=404, detail="Image not found")
+        return image
+
+    def search_images(self, query: str):
+        results = self.repo.search_images(query)
+        if not results:
+            raise HTTPException(status_code=404, detail="No images found")
+        return results
+
 router = APIRouter()
 
 @router.post("/")
-async def post_image(file: UploadFile):
-    """
-    Save an uploaded image to the server.
-    """
-    try:
-        # Define the upload path
-        file_path = upload_path / file.filename
+def create_image(filename: str, file_path: str, uploader: str, db: Session = Depends(get_db)):
+    controller = ImageController(db)
+    return controller.add_image(filename=filename, file_path=file_path, uploader=uploader)
 
-        # Save the file
-        with open(file_path, "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
+@router.get("/{image_id}")
+def get_image(image_id: int, db: Session = Depends(get_db)):
+    controller = ImageController(db)
+    return controller.get_image_by_id(image_id)
 
-        return {"message": f"File {file.filename} uploaded successfully.", "file_path": str(file_path)}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to upload the file: {str(e)}")
-
-@router.get("/{file_name}")
-async def get_image(file_name: str):
-    """
-    Retrieve an image by file name.
-    """
-    try:
-        # Define the file path
-        file_path = upload_path / file_name
-
-        # Check if the file exists
-        if not file_path.exists():
-            raise HTTPException(status_code=404, detail="File not found.")
-
-        # Return the file as a response
-        return FileResponse(file_path, media_type="application/octet-stream", filename=file_name)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to retrieve the file: {str(e)}")
+@router.get("/action/search/")
+def search_images(query: str, db: Session = Depends(get_db)):
+    controller = ImageController(db)
+    return controller.search_images(query)

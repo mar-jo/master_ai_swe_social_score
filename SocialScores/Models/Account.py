@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String
 from SocialScores.Database.Database import Base  # Import Base from your database module
 from pydantic import BaseModel, EmailStr
 from typing import Optional
+from pydantic import BaseModel, ConfigDict
 
 # SQLAlchemy ORM Model
 class Account(Base):
@@ -39,6 +40,8 @@ class AccountCreate(AccountBase):
 
 class AccountResponse(AccountBase):
     id: int
+
+    model_config = ConfigDict(from_attributes=True)
 
 class AccountLogin(BaseModel):
     username: str

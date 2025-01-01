@@ -1,39 +1,51 @@
-from fastapi import APIRouter, Depends
-from SocialScores.Models.Post import PostBase
-from SocialScores.Controllers import PostController
-from SocialScores.Database.DatabaseFactory import DatabaseFactory
+from fastapi import APIRouter, Depends, Query
+from sqlalchemy.orm import Session
+from SocialScores.Database.RepositoryPosts import RepositoryPosts
+from SocialScores.Models.Post import PostBase, PostResponse
+from SocialScores.Database.Database import get_db
 
-DATABASE_ENGINE = 'postgres'
-CONNECTION_STRING = 'dbname=socialscores user=postgres password=admin host=database port=5432'
+class PostController:
+    def __init__(self, db):
+        self.repo = RepositoryPosts(db)
+
+    def create_post(self, post_data: PostBase):
+        return self.repo.create_post(
+            user=post_data.user,
+            text=post_data.text,
+            image=post_data.image
+        )
+
+    def get_post(self, post_id: int):
+        return self.repo.get_post_by_id(post_id)
+
+    def get_latest_posts(self, limit: int = 10):
+        return self.repo.get_latest_posts(limit)
+
+    def search_posts(self, query: str):
+        return self.repo.search_posts(query)
 
 router = APIRouter()
 
-# Dependency to provide a connected database
-def get_database():
-    db_factory = DatabaseFactory()
-    database = db_factory.create(DATABASE_ENGINE, CONNECTION_STRING)
-    database.connect()
-    try:
-        yield database
-    finally:
-        database.close()
+@router.post("/")
+async def create_post(post: PostBase, db: Session = Depends(get_db)):
+    controller = PostController(db)
+    return controller.create_post(post)
 
-@router.post("/api/v1/post")
-async def create_post(post: PostBase, database=Depends(get_database)):
-    response = PostController.create_post(post, database)
-    return response
+@router.get("/action/search/")
+async def search_posts(query: str, db: Session = Depends(get_db)):
+    controller = PostController(db)
+    return controller.search_posts(query)
 
-@router.get("/api/v1/post/{post_id}")
-async def get_post(post_id: int, database=Depends(get_database)):
-    response = PostController.get_post(post_id, database)
-    return response
+@router.get("/action/latest/")
+async def get_latest_posts(limit: int = 10, db: Session = Depends(get_db)):
+    controller = PostController(db)
+    return controller.get_latest_posts(limit)
 
-@router.get("/api/v1/post/latest")
-async def get_post_latest(database=Depends(get_database)):
-    response = PostController.get_post_latest(database)
-    return response
+@router.get("/{post_id}")
+async def get_post(post_id: int, db: Session = Depends(get_db)):
+    controller = PostController(db)
+    post = controller.get_post(post_id)
+    if not post:
+        return {"detail": "Post not found"}
+    return post
 
-@router.get("/api/v1/post/search/{query}")
-async def search_post(query: str, database=Depends(get_database)):
-    response = PostController.search_post(query, database)
-    return response

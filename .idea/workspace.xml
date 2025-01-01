@@ -5,21 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="492b4fd1-b32b-412c-8331-9d391d011c48" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SocialScores/Controllers/AccountController.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SocialScores/Controllers/ImageController.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SocialScores/Controllers/PostController.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SocialScores/Database/Database.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SocialScores/Database/DatabaseFactory.py" beforeDir="false" afterPath="$PROJECT_DIR$/SocialScores/Database/DatabaseFactory.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SocialScores/Database/InitializationJob.py" beforeDir="false" afterPath="$PROJECT_DIR$/SocialScores/Database/InitializationJob.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SocialScores/Database/PostgreDatabase.py" beforeDir="false" afterPath="$PROJECT_DIR$/SocialScores/Database/PostgreDatabase.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/SocialScores/Database/RepositoryImage.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/SocialScores/Models/Image.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SocialScores/Controllers/AccountController.py" beforeDir="false" afterPath="$PROJECT_DIR$/SocialScores/Controllers/AccountController.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SocialScores/Controllers/ImageController.py" beforeDir="false" afterPath="$PROJECT_DIR$/SocialScores/Controllers/ImageController.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SocialScores/Controllers/PostController.py" beforeDir="false" afterPath="$PROJECT_DIR$/SocialScores/Controllers/PostController.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SocialScores/Database/RepositoryAccount.py" beforeDir="false" afterPath="$PROJECT_DIR$/SocialScores/Database/RepositoryAccount.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SocialScores/Database/RepositoryPosts.py" beforeDir="false" afterPath="$PROJECT_DIR$/SocialScores/Database/RepositoryPosts.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SocialScores/Database/Sqlite3Database.py" beforeDir="false" afterPath="$PROJECT_DIR$/SocialScores/Database/Sqlite3Database.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SocialScores/Models/Account.py" beforeDir="false" afterPath="$PROJECT_DIR$/SocialScores/Models/Account.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SocialScores/Models/Post.py" beforeDir="false" afterPath="$PROJECT_DIR$/SocialScores/Models/Post.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SocialScores/Models/account.py" beforeDir="false" afterPath="$PROJECT_DIR$/SocialScores/Models/Account.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SocialScores/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/SocialScores/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

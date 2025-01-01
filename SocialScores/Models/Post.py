@@ -1,8 +1,8 @@
 from sqlalchemy import Column, Integer, String, Text, TIMESTAMP, func
 from SocialScores.Database.Database import Base  # Import Base from your database module
-from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
+from pydantic import BaseModel, ConfigDict
 
 # SQLAlchemy ORM Model
 class Post(Base):
@@ -31,3 +31,5 @@ class PostCreate(PostBase):
 
 class PostResponse(PostBase):
     time_created: datetime
+
+    model_config = ConfigDict(from_attributes=True)

@@ -8,15 +8,13 @@ from SocialScores.Controllers.PostController import router as post_router
 from SocialScores.Controllers.ImageController import router as image_router
 from SocialScores.Controllers.AccountController import router as account_router
 
-# Print encoding for debugging
 print(f"Preferred encoding: {locale.getpreferredencoding()}")
 
-# Define lifespan for application startup and shutdown
 @asynccontextmanager
 async def app_lifespan(app: FastAPI):
     try:
         print("Starting application...")
-        InitializationJob.start()  # Ensure database tables and test data are initialized
+        InitializationJob.start()
         print("Database initialization complete.")
         yield
     except Exception as e:
@@ -25,7 +23,6 @@ async def app_lifespan(app: FastAPI):
     finally:
         print("Application is shutting down...")
 
-# Initialize FastAPI app with lifespan
 app = FastAPI(
     title="Social Scores API",
     version="1.0.0",
@@ -33,7 +30,6 @@ app = FastAPI(
     lifespan=app_lifespan,
 )
 
-# Load OpenAPI schema and validate
 try:
     with open("openapi.json", "r") as file:
         openapi_schema = json.load(file)
@@ -44,12 +40,10 @@ except FileNotFoundError:
 except json.JSONDecodeError as e:
     print(f"Error decoding openapi.json: {e}")
 
-# Include routers for endpoints
 app.include_router(account_router, prefix="/api/v1/account", tags=["Account"])
 app.include_router(post_router, prefix="/api/v1/post", tags=["Post"])
 app.include_router(image_router, prefix="/api/v1/image", tags=["Image"])
 
-# Root endpoint
 @app.get("/")
 def read_root():
     return {"message": "Welcome to the Social Scores API"}
