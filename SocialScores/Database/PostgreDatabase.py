@@ -3,7 +3,7 @@ from psycopg2 import sql
 from typing import List, Dict, Tuple
 from contextlib import contextmanager
 
-from Database.DatabaseBase import Database
+from SocialScores.Database.DatabaseBase import Database
 
 class PostgresDatabase(Database):
     def __init__(self, connection_string: str):

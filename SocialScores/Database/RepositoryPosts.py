@@ -1,36 +1,34 @@
-import Database as Database
-import Models.Post as Post
+from SocialScores.Models.Post import Post, PostBase, PostResponse
+from sqlalchemy.orm import Session
+from datetime import datetime
 
-def convert_post_to_dict(post: Post) -> dict:
-    return {
-        'id': post.id,
-        'username': post.username,
-        'image': post.image,
-    }
-
-table_name = 'posts'
+table_name = "posts"
 
 columns = {
-    'id': 'INTEGER',
-    'username': 'TEXT',
-    'image': 'BLOB',
+    "id": "SERIAL PRIMARY KEY",
+    '"user"': "TEXT NOT NULL",
+    "text": "TEXT",
+    "image": "TEXT",
+    "time_created": "TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
 }
 
 class RepositoryPosts:
-    def __init__(self, database: Database):
-        self.database = database
+    def __init__(self, db: Session):
+        self.db = db
 
-    def add_post(self, post : Post):
-        self.database.insert(table_name, convert_post_to_dict(post))
+    def create_post(self, user: str, text: str = None, image: str = None):
+        new_post = Post(user=user, text=text, image=image)
+        self.db.add(new_post)
+        self.db.commit()
+        self.db.refresh(new_post)
 
-    def get_post(self, id):
-        return self.database.fetchone(f"SELECT * FROM {table_name} WHERE id = %s", (id,))
+        return new_post
 
-    def get_all_posts(self):
-        return self.database.fetchall(f"SELECT * FROM {table_name}")
+    def get_post_by_id(self, post_id: int):
+        return self.db.query(Post).filter(Post.id == post_id).first()
 
-    #def update_post(self, post):
-    #    self.database.update_post(post)
+    def get_latest_posts(self, limit: int = 10):
+        return self.db.query(Post).order_by(Post.time_created.desc()).limit(limit).all()
 
-    def delete_post(self, id):
-        self.database.delete(table_name, "id = %s", (id,))
+    def search_posts(self, query: str):
+        return self.db.query(Post).filter(Post.text.ilike(f"%{query}%")).all()
