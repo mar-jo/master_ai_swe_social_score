@@ -1,9 +1,15 @@
-﻿@inherits LayoutComponentBase
+﻿@using SocialScoresFrontend.Components.Infra.Session
+@inherits LayoutComponentBase
+@inject SessionAccountCache accountCache
 
 <div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+
+    @if(accountCache.IsLoggedIn())
+    {
+        <div class="sidebar">
+            <NavMenu />
+        </div>
+    }
 
     <main>
         <div class="top-row px-4">

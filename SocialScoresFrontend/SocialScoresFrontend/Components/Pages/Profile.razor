@@ -1,0 +1,17 @@
+﻿@page "/profile";
+@using SocialScoresFrontend.Components.Models
+
+<h3>Profile</h3>
+
+<div>
+	<h4>Account details</h4>
+	<p>Username: @Account.Username</p>
+	<p>Score: @Account.SocialScore</p>
+</div>
+
+<!-- Add Account details -->
+
+@code {
+	[Parameter]
+	public Account Account { get; set; }
+}

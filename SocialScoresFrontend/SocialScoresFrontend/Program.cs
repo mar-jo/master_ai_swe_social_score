@@ -1,10 +1,23 @@
 using SocialScoresFrontend.Components;
+using SocialScoresFrontend.Components.Infra.Requests;
+using SocialScoresFrontend.Components.Infra.Session;
+using SocialScoresFrontend.Components.Infra.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+// Bootstrap communication
+string? baseUrl = builder.Configuration["BackendBaseUrl"];
+Assert.NotNull(baseUrl, "BackendUrl could not be found in the configuration");
+builder.Services.AddHttpClient();
+builder.Services.AddSingleton<BackendClient>(serviceProvider => new BackendClient(serviceProvider.GetRequiredService<HttpClient>(), baseUrl));
+builder.Services.AddSingleton<AccountRequests>();
+
+// Session services
+builder.Services.AddScoped<SessionAccountCache>();
 
 var app = builder.Build();
 

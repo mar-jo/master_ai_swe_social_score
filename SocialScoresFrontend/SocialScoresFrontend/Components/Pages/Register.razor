@@ -1,0 +1,68 @@
+﻿@page "/register"
+@using SocialScoresFrontend.Components.Infra.Requests
+@using SocialScoresFrontend.Components.Infra.Session
+@using SocialScoresFrontend.Components.Infra.Utils
+@using SocialScoresFrontend.Components.Models
+@using System.ComponentModel.DataAnnotations
+@inject SessionAccountCache accountCache
+@inject AccountRequests accountRequests;
+@inject NavigationManager navigationManager;
+
+<div class="login-container">
+    <div class="login-box">
+        <h2>Register</h2>
+        <EditForm Model="User" OnValidSubmit="OnRegister" FormName="LoginForm">
+            <DataAnnotationsValidator/>
+            <ValidationSummary />
+            <div class="form-group">
+                <label for="username">Username</label>
+                <InputText class="form-control" @bind-Value="User!.Username" />
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <InputText type="email" class="form-control" @bind-Value="User!.Email" />
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <InputText type="password" class="form-control" @bind-Value="User!.Password" />
+            </div>
+            <button type="submit" class="btn btn-primary">Register</button>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private UserModel? User { get; set; }
+
+    protected override void OnInitialized()
+    {
+        User ??= new();
+    }
+
+    private async Task OnRegister()
+    {
+        Assert.NotNull(User, "Fatal error the user object is not set");
+
+        int id = await accountRequests.RegisterAccount(User.Username!, User.Email!, User.Password!);
+        accountCache.SetAccount(id);
+
+        if (accountCache.IsLoggedIn())
+        {
+            navigationManager.NavigateTo("/home");
+            StateHasChanged();
+        }
+    }
+
+    public class UserModel
+    {
+        [Required]
+        public string? Username { get; set; }
+
+        [Required]
+        public string? Email { get; set; }
+
+        [Required]
+        public string? Password { get; set; }
+    }
+}
