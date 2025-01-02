@@ -5,7 +5,6 @@ from SocialScores.Models.Post import Base as PostBase
 database_engine = 'postgres'
 connection_string = 'postgresql://postgres:admin@database:5432/socialscores'  # Use full connection URL
 
-
 def start():
     """
     Initialize the database by creating required tables using SQLAlchemy's Base.metadata.create_all()
