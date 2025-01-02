@@ -39,6 +39,20 @@ namespace SocialScoresFrontend.Components.Infra.Requests
             return accountId.id;
         }
 
+        public async Task<Account> GetAccount(int id)
+        {
+            // ToDo route anpassen, wenn mark entwickelt hat
+
+            return new Account()
+            {
+                Id = id,
+                Email = "david@david.at",
+                Username = "David",
+                Password = "David",
+                SocialScore = 2000
+            };
+        }
+
         private readonly BackendClient client;
     }
 

@@ -15,9 +15,10 @@ Assert.NotNull(baseUrl, "BackendUrl could not be found in the configuration");
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton<BackendClient>(serviceProvider => new BackendClient(serviceProvider.GetRequiredService<HttpClient>(), baseUrl));
 builder.Services.AddSingleton<AccountRequests>();
+builder.Services.AddSingleton<PostRequests>();
 
 // Session services
-builder.Services.AddScoped<SessionAccountCache>();
+builder.Services.AddSingleton<SessionAccountCache>();
 
 var app = builder.Build();
 

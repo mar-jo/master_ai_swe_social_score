@@ -1,17 +1,51 @@
-﻿@page "/profile";
+﻿@page "/profile/{id:int}";
+@using SocialScoresFrontend.Components.Infra.Requests
+@using SocialScoresFrontend.Components.Infra.Utils
 @using SocialScoresFrontend.Components.Models
+@inject AccountRequests AccountRequests
+@inject PostRequests PostRequests
 
 <h3>Profile</h3>
 
 <div>
-	<h4>Account details</h4>
-	<p>Username: @Account.Username</p>
-	<p>Score: @Account.SocialScore</p>
+    <h4>Account Details</h4>
+    <p><strong>Username:</strong> @loaded.Username</p>
+    <p><strong>Email:</strong> @loaded.Email</p>
+    <p><strong>Score:</strong> @loaded.SocialScore</p>
 </div>
 
-<!-- Add Account details -->
+<!-- Posts Section -->
+<div>
+    <h4>User Posts</h4>
+    @if (posts != null && posts.Any())
+    {
+        foreach (var post in posts)
+        {
+            <div class="post">
+                <img src="/favicon.png" alt="Post image" class="post-image" />
+                <p class="caption">@post.Text</p>
+                <p class="caption">@post.TimeCreated.ToShortDateString()</p>
+            </div>
+        }
+    }
+    else
+    {
+        <p>No posts available.</p>
+    }
+</div>
 
 @code {
 	[Parameter]
-	public Account Account { get; set; }
+	public int? Id { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		Assert.NotNull(Id, "The Id provided to the pofile page was not valid");
+		loaded = await AccountRequests.GetAccount(Id!.Value);
+
+		posts = PostRequests.GetPostsForAccount(Id.Value);
+	}
+
+	private Account? loaded;
+	private Post[]? posts;
 }

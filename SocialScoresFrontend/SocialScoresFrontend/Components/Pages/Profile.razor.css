@@ -1,0 +1,14 @@
+﻿.post {
+    margin-bottom: 20px;
+}
+
+.post-image {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+.caption {
+    font-style: italic;
+    margin-top: 10px;
+}
