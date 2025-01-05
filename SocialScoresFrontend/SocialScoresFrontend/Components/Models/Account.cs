@@ -7,5 +7,7 @@
         public required string Username { get; set; }
         public required string Password { get; set; }
         public required int SocialScore { get; set; }
+
+        public int? ProfileImageId { get; set; }
     }
 }

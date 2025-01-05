@@ -17,14 +17,14 @@ namespace SocialScoresFrontend.Components.Infra.Requests
                 new Post(){
                     Id = 1,
                     Text = "Hello World",
-                    Username = "David",
+                    User = "David",
                     TimeCreated = DateTime.Now,
                     Image = ""
                 },
                 new Post(){
                     Id = 2,
                     Text = "Boba kurwa",
-                    Username = "David",
+                    User = "David",
                     TimeCreated = DateTime.Now,
                     Image = ""
                 },

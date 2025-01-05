@@ -6,6 +6,7 @@ namespace SocialScoresFrontend.Components.Infra.Requests
     {
         private const string RegisterRoute = "account/register";
         private const string LoginRoute = "account/login";
+        private const string GetAccountRoute = "account/info";
 
         public AccountRequests(BackendClient client)
         {
@@ -41,19 +42,30 @@ namespace SocialScoresFrontend.Components.Infra.Requests
 
         public async Task<Account> GetAccount(int id)
         {
-            // ToDo route anpassen, wenn mark entwickelt hat
+            AccountDetails details = client.Get<AccountDetails>(GetAccountRoute+ $"?account_id={id}");
 
             return new Account()
             {
-                Id = id,
-                Email = "david@david.at",
-                Username = "David",
-                Password = "David",
-                SocialScore = 2000
+                Id = details.id,
+                Email = details.email,
+                Username = details.username,
+                Password = details.password,
+                SocialScore = details.socialscore,
+                ProfileImageId = details.profile_image_id
             };
         }
 
         private readonly BackendClient client;
+    }
+
+    public class AccountDetails
+    {
+        public string password { get; set; }
+        public int socialscore { get; set; }
+        public int id { get; set; }
+        public string email { get; set; }
+        public string username { get; set; }
+        public int? profile_image_id { get; set; } // Nullable integer for profile_image_id
     }
 
     public class LoginAccountContext
