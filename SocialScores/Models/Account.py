@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import relationship
 from SocialScores.Database.Database import Base  # Import Base from your database module
 from pydantic import BaseModel, EmailStr
 from typing import Optional
@@ -9,10 +10,14 @@ class Account(Base):
     __tablename__ = 'accounts'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    email = Column(String, unique=True, nullable=False, index=True)  # Indexed for performance
-    username = Column(String, unique=True, nullable=False, index=True)  # Indexed for performance
-    password = Column(String, nullable=False)  # Store hashed passwords
-    socialscore = Column(Integer, default=0)  # Default social score
+    email = Column(String, unique=True, nullable=False, index=True)
+    username = Column(String, unique=True, nullable=False, index=True)
+    password = Column(String, nullable=False)
+    socialscore = Column(Integer, default=0)
+    profile_image_id = Column(Integer, ForeignKey('images.id'), nullable=True)
+
+    profile_image = relationship("Image")
+    posts = relationship("Post", back_populates="account", cascade="all, delete-orphan")
 
     def __init__(self, email: str, username: str, password: str, socialscore: int = 0):
         self.email = email

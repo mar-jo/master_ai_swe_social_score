@@ -1,28 +1,36 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, LargeBinary, TIMESTAMP, func
 from SocialScores.Database.Database import Base
+from sqlalchemy.orm import relationship
+from datetime import datetime
+from pydantic import BaseModel, ConfigDict
 
-from pydantic import BaseModel
-from typing import Optional
-
+# SQLAlchemy ORM Model
 class Image(Base):
-    __tablename__ = "images"
+    __tablename__ = 'images'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    filename = Column(String, nullable=False, unique=True)
-    file_path = Column(String, nullable=False)
+    filename = Column(String, nullable=False)
+    binary_data = Column(LargeBinary, nullable=False)  # Store binary data
     uploader = Column(String, nullable=False)
+    time_created = Column(TIMESTAMP, server_default=func.now())
 
-    def __init__(self, filename: str, file_path: str, uploader: str):
+    post = relationship("Post", back_populates="image")
+
+    def __init__(self, filename: str, binary_data: bytes, uploader: str):
         self.filename = filename
-        self.file_path = file_path
+        self.binary_data = binary_data
         self.uploader = uploader
 
+# Pydantic Schemas
 class ImageBase(BaseModel):
-    file_name: str
-    description: Optional[str] = None
+    filename: str
+    binary_data: bytes
+    uploader: str
 
 class ImageCreate(ImageBase):
-    pass
+    id: int
 
 class ImageResponse(ImageBase):
-    id: int
+    time_created: datetime
+
+    model_config = ConfigDict(from_attributes=True)
