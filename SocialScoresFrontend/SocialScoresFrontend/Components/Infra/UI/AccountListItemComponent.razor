@@ -1,0 +1,19 @@
+﻿@inject NavigationManager NavigationManager
+
+@using SocialScoresFrontend.Components.Models
+<div style="display:flex">
+	<h4>@Account?.Username</h4>
+	<span>@Account?.SocialScore</span>
+	<button @onclick="GoToProfile">GoToProfile</button>
+</div>
+
+@code {
+	[Parameter]
+	public Account? Account { get; set; }
+
+	private void GoToProfile()
+	{
+		// Navigate to the profile page
+		NavigationManager.NavigateTo($"/profile/{Account?.Id}");
+	}
+}

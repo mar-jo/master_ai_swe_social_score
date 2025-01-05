@@ -1,5 +1,25 @@
-﻿<h3>Explore</h3>
+﻿@using SocialScoresFrontend.Components.Models
+<h3>Explore</h3>
+
+<div style="overflow-y:auto; max-height:800px;">
+    @if (accounts != null && accounts.Any())
+    {
+        @foreach (var item in accounts)
+        {
+			<SocialScoresFrontend.Components.Infra.UI.AccountListItemComponent Account="item" />
+        }
+    }
+    else
+    {
+        <p>No items to display</p>
+    }
+</div>
 
 @code {
+    protected override Task OnInitializedAsync()
+    {
+        accounts = [];
+    }
 
+    private Account[]? accounts;
 }
