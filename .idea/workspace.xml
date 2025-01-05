@@ -5,17 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="492b4fd1-b32b-412c-8331-9d391d011c48" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/SocialScores/Database/RepositoryImage.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SocialScores/Models/Image.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SocialScores/Controllers/AccountController.py" beforeDir="false" afterPath="$PROJECT_DIR$/SocialScores/Controllers/AccountController.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SocialScores/Controllers/ImageController.py" beforeDir="false" afterPath="$PROJECT_DIR$/SocialScores/Controllers/ImageController.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SocialScores/Controllers/PostController.py" beforeDir="false" afterPath="$PROJECT_DIR$/SocialScores/Controllers/PostController.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SocialScores/Database/RepositoryAccount.py" beforeDir="false" afterPath="$PROJECT_DIR$/SocialScores/Database/RepositoryAccount.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SocialScores/Database/RepositoryImage.py" beforeDir="false" afterPath="$PROJECT_DIR$/SocialScores/Database/RepositoryImage.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SocialScores/Database/RepositoryPosts.py" beforeDir="false" afterPath="$PROJECT_DIR$/SocialScores/Database/RepositoryPosts.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SocialScores/Models/Account.py" beforeDir="false" afterPath="$PROJECT_DIR$/SocialScores/Models/Account.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SocialScores/Models/Image.py" beforeDir="false" afterPath="$PROJECT_DIR$/SocialScores/Models/Image.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SocialScores/Models/Post.py" beforeDir="false" afterPath="$PROJECT_DIR$/SocialScores/Models/Post.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SocialScores/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/SocialScores/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,15 +44,15 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;backend__api&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/markx/PycharmProjects/ML1&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;terminal&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.main.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "api__expansion",
+    "last_opened_file_path": "C:/Users/markx/PycharmProjects/ML1",
+    "settings.editor.selected.configurable": "terminal"
   }
-}</component>
+}]]></component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
