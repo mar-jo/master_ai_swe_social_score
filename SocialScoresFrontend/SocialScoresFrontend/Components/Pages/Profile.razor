@@ -4,6 +4,7 @@
 @using SocialScoresFrontend.Components.Models
 @inject AccountRequests AccountRequests
 @inject PostRequests PostRequests
+@inject NavigationManager Navigation
 
 <h3>Profile</h3>
 
@@ -13,6 +14,10 @@
     <p><strong>Email:</strong> @loaded?.Email</p>
     <p><strong>Score:</strong> @loaded?.SocialScore</p>
 </div>
+
+<button class="btn btn-primary" @onclick="NavigateToNewPost">
+    <i class="fa fa-plus"></i> New Post
+</button>
 
 <!-- Posts Section -->
 <div>
@@ -45,6 +50,11 @@
 
 		posts = PostRequests.GetPostsForAccount(Id.Value);
 	}
+
+    private void NavigateToNewPost()
+    {
+        Navigation.NavigateTo("/newpost");
+    }
 
 	private Account? loaded;
 	private Post[]? posts;

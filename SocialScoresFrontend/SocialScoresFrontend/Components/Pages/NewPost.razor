@@ -1,0 +1,64 @@
+﻿@page "/newpost"
+@using Microsoft.AspNetCore.Components.Forms
+@using System.ComponentModel.DataAnnotations
+@inject IJSRuntime JSRuntime
+
+<h3>New Post</h3>
+
+<EditForm Model="post" OnValidSubmit="HandleSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label for="postText">Text</label>
+        <textarea id="postText" @bind="post.Text" class="form-control"></textarea>
+    </div>
+
+    <div>
+        <label for="imageUpload">Upload Image</label>
+        <InputFile OnChange="HandleFileSelected" />
+    </div>
+
+    <div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+</EditForm>
+
+@if (!string.IsNullOrEmpty(previewImage))
+{
+    <div>
+        <h5>Image Preview:</h5>
+
+        <img src="@previewImage" alt="Preview" style="max-width: 100%; height: auto;" />
+    </div>
+}
+
+@code {
+    private PostModel post = new();
+    private string? previewImage;
+
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        if (file != null)
+        {
+            var buffer = new byte[file.Size];
+            await file.OpenReadStream().ReadAsync(buffer);
+            previewImage = $"data:{file.ContentType};base64,{Convert.ToBase64String(buffer)}";
+        }
+    }
+
+    private void HandleSubmit()
+    {
+        // Logic to handle form submission, e.g., sending the data to an API
+        Console.WriteLine($"Post Text: {post.Text}");
+        Console.WriteLine($"Preview Image: {previewImage}");
+    }
+
+    public class PostModel
+    {
+        [Required]
+        [StringLength(500, ErrorMessage = "Text must be 500 characters or less.")]
+        public string? Text { get; set; }
+    }
+}

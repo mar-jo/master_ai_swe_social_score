@@ -1,5 +1,30 @@
-﻿<h3>Highscore</h3>
+﻿@page "/highscore"
+@using SocialScoresFrontend.Components.Infra.Requests
+@using SocialScoresFrontend.Components.Models
+@inject AccountRequests AccountRequests;
+
+<h3>Highscore</h3>
+
+<div style="overflow-y:auto; max-height:800px;">
+    @if (accounts != null && accounts.Any())
+    {
+        @foreach (var item in accounts)
+        {
+            <SocialScoresFrontend.Components.Infra.UI.AccountListItemComponent Account="item" />
+        }
+    }
+    else
+    {
+        <p>No items to display</p>
+    }
+</div>
 
 @code {
+    protected override async Task OnInitializedAsync()
+    {
+        accounts = await AccountRequests.GetRandomAccounts(100);
+		accounts = accounts.OrderBy(x => x.SocialScore).ToArray();
+    }
 
+    private Account[]? accounts;
 }
