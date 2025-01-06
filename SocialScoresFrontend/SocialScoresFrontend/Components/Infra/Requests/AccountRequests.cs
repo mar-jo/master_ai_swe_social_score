@@ -7,6 +7,7 @@ namespace SocialScoresFrontend.Components.Infra.Requests
         private const string RegisterRoute = "account/register";
         private const string LoginRoute = "account/login";
         private const string GetAccountRoute = "account/info";
+        private const string GetRandomAccountsRoute = "account/explore";
 
         public AccountRequests(BackendClient client)
         {
@@ -42,8 +43,20 @@ namespace SocialScoresFrontend.Components.Infra.Requests
 
         public async Task<Account> GetAccount(int id)
         {
-            AccountDetails details = client.Get<AccountDetails>(GetAccountRoute+ $"?account_id={id}");
+            AccountDetails details = await client.Get<AccountDetails>(GetAccountRoute + $"?account_id={id}");
 
+            return GetAccountFromDetails(details);
+        }
+
+        public async Task<Account[]> GetRandomAccounts(int count)
+        {
+            AccountDetails[] details = await client.Get<AccountDetails[]>(GetRandomAccountsRoute + $"?count={count}");
+
+            return details.Select(GetAccountFromDetails).ToArray();
+        }
+
+        private static Account GetAccountFromDetails(AccountDetails details)
+        {
             return new Account()
             {
                 Id = details.id,
@@ -54,6 +67,7 @@ namespace SocialScoresFrontend.Components.Infra.Requests
                 ProfileImageId = details.profile_image_id
             };
         }
+
 
         private readonly BackendClient client;
     }

@@ -9,15 +9,15 @@
 
 <div>
     <h4>Account Details</h4>
-    <p><strong>Username:</strong> @loaded.Username</p>
-    <p><strong>Email:</strong> @loaded.Email</p>
-    <p><strong>Score:</strong> @loaded.SocialScore</p>
+    <p><strong>Username:</strong> @loaded?.Username</p>
+    <p><strong>Email:</strong> @loaded?.Email</p>
+    <p><strong>Score:</strong> @loaded?.SocialScore</p>
 </div>
 
 <!-- Posts Section -->
 <div>
     <h4>User Posts</h4>
-    @if (posts != null && posts.Any())
+    @if (posts != null && posts?.Length != 0)
     {
         foreach (var post in posts)
         {
