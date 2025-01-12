@@ -8,6 +8,7 @@ namespace SocialScoresFrontend.Components.Infra.Requests
         private const string LoginRoute = "account/login";
         private const string GetAccountRoute = "account/info";
         private const string GetRandomAccountsRoute = "account/explore";
+        private const string UpdateSocialScoreRoute = "account/update-socialscore";
 
         public AccountRequests(BackendClient client)
         {
@@ -55,6 +56,19 @@ namespace SocialScoresFrontend.Components.Infra.Requests
             return details.Select(GetAccountFromDetails).ToArray();
         }
 
+        public async Task<bool> UpdateSocialScore(int accountId, int delta)
+        {
+            FormDataItem[] formDataItems = new FormDataItem[]
+            {
+                new FormDataItem("account_id", accountId),
+                new FormDataItem("delta", delta)
+            };
+
+            AccountDetails deltaedAccount = await client.PostForm<AccountDetails>(UpdateSocialScoreRoute, formDataItems);
+
+            return true;
+        }
+
         private static Account GetAccountFromDetails(AccountDetails details)
         {
             return new Account()
@@ -67,7 +81,6 @@ namespace SocialScoresFrontend.Components.Infra.Requests
                 ProfileImageId = details.profile_image_id
             };
         }
-
 
         private readonly BackendClient client;
     }

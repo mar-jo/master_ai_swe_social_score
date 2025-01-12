@@ -1,0 +1,52 @@
+﻿@using Microsoft.AspNetCore.Components
+@using SocialScoresFrontend.Components.Infra.Requests
+@using SocialScoresFrontend.Components.Infra.Utils
+@using SocialScoresFrontend.Components.Models
+
+@inject AccountRequests AccountRequests
+
+<div class="vote-container">
+    <button class="vote-button upvote" @onclick="Upvote">👍</button>
+    <span class="vote-score">@(Account?.SocialScore ?? 0)</span>
+    <button class="vote-button downvote" @onclick="Downvote">👎</button>
+</div>
+
+@code {
+    [Parameter] public Account? Account { get; set; }
+
+    private bool IsUpvoted { get; set; } = false;
+    private bool IsDownvoted { get; set; } = false;
+
+    private async Task Upvote()
+    {
+        Assert.NotNull(Account, "This action is only allowed when account is not null.");
+
+        if (!IsUpvoted)
+        {
+            Account!.SocialScore++;
+            IsUpvoted = true;
+            IsDownvoted = !IsUpvoted;
+
+            await UpdateSocialScore(1);
+        }
+    }
+
+    private async Task Downvote()
+    {
+        Assert.NotNull(Account, "This action is only allowed when account is not null.");
+
+        if (!IsDownvoted)
+        {
+            Account!.SocialScore++;
+            IsDownvoted = true;
+            IsUpvoted = !IsDownvoted;
+
+            await UpdateSocialScore(-1);
+        }
+    }
+
+    private async Task UpdateSocialScore(int value)
+    {
+		await AccountRequests.UpdateSocialScore(Account!.Id, value);
+    }
+}
