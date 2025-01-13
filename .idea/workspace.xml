@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="492b4fd1-b32b-412c-8331-9d391d011c48" name="Changes" comment="">
+<<<<<<< Updated upstream
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SocialScores/Controllers/AccountController.py" beforeDir="false" afterPath="$PROJECT_DIR$/SocialScores/Controllers/AccountController.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SocialScores/Controllers/ImageController.py" beforeDir="false" afterPath="$PROJECT_DIR$/SocialScores/Controllers/ImageController.py" afterDir="false" />
@@ -15,6 +16,14 @@
       <change beforePath="$PROJECT_DIR$/SocialScores/Models/Account.py" beforeDir="false" afterPath="$PROJECT_DIR$/SocialScores/Models/Account.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SocialScores/Models/Image.py" beforeDir="false" afterPath="$PROJECT_DIR$/SocialScores/Models/Image.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SocialScores/Models/Post.py" beforeDir="false" afterPath="$PROJECT_DIR$/SocialScores/Models/Post.py" afterDir="false" />
+=======
+      <change afterPath="$PROJECT_DIR$/tests/test_account_controller.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/test_image_controller.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/test_post_controller.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/workflows/test-workflow.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/test-workflow.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SocialScores/test_main.py" beforeDir="false" />
+>>>>>>> Stashed changes
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,7 +57,11 @@
   "keyToString": {
     "Python.main.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+<<<<<<< Updated upstream
     "git-widget-placeholder": "api__expansion",
+=======
+    "git-widget-placeholder": "microservices",
+>>>>>>> Stashed changes
     "last_opened_file_path": "C:/Users/markx/PycharmProjects/ML1",
     "settings.editor.selected.configurable": "terminal"
   }
