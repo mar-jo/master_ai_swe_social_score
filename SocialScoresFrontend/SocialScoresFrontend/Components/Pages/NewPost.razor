@@ -1,7 +1,13 @@
-﻿@page "/newpost"
+﻿@page "/newpost/{id:int}"
 @using Microsoft.AspNetCore.Components.Forms
 @using System.ComponentModel.DataAnnotations
+@using SocialScoresFrontend.Components.Infra.Requests
+@using SocialScoresFrontend.Components.Infra.Utils
+@using SocialScoresFrontend.Components.Models
 @inject IJSRuntime JSRuntime
+@inject AccountRequests AccountRequests
+@inject PostRequests PostRequests
+@inject NavigationManager NavigationManager
 
 <h3>New Post</h3>
 
@@ -34,27 +40,48 @@
 }
 
 @code {
+    [Parameter]
+    public int? Id { get; set; }
+
     private PostModel post = new();
     private string? previewImage;
+    private FileData? fileData;
 
     private async Task HandleFileSelected(InputFileChangeEventArgs e)
     {
         var file = e.File;
         if (file != null)
         {
-            var buffer = new byte[file.Size];
-            await file.OpenReadStream().ReadAsync(buffer);
-            previewImage = $"data:{file.ContentType};base64,{Convert.ToBase64String(buffer)}";
+            fileData = new FileData();
+            fileData.MimeType = file.ContentType;
+            fileData.Data = new byte[file.Size];
+            await file.OpenReadStream(maxAllowedSize: 1024000).ReadAsync(fileData.Data); // 1 MB max size
+            previewImage = $"data:{file.ContentType};base64,{Convert.ToBase64String(fileData.Data)}";
         }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Assert.NotNull(Id, "The Id provided to the pofile page was not valid");
+        loaded = await AccountRequests.GetAccount(Id!.Value);
     }
 
     private void HandleSubmit()
     {
-        // Logic to handle form submission, e.g., sending the data to an API
-        Console.WriteLine($"Post Text: {post.Text}");
-        Console.WriteLine($"Preview Image: {previewImage}");
+        Assert.NotNull(loaded, "The account must be loaded before submitting a post.");
+        Assert.NotNull(fileData, "An image must be selected before submitting a post.");
+        Assert.That(fileData!.Data.Length > 0, "The image must not be empty.");
+        Assert.NotNull(post?.Text, "The post text must not be null.");
+        Assert.That(post!.Text!.Length > 0, "The post text must not be empty.");
+
+        var response = PostRequests.CreateNewPost(loaded!.Id, loaded.Username, post!.Text, fileData);
+
+        NavigationManager.NavigateTo("profile/" + Id);
     }
 
+    private Account? loaded;
+
+    // Models for the view
     public class PostModel
     {
         [Required]

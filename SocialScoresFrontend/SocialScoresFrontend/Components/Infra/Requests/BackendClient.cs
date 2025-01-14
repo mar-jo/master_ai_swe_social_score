@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using SocialScoresFrontend.Components.Models;
+using System.Text;
 using System.Text.Json;
 
 namespace SocialScoresFrontend.Components.Infra.Requests
@@ -61,21 +62,13 @@ namespace SocialScoresFrontend.Components.Infra.Requests
                         // Add string content
                         formData.Add(new StringContent(stringValue), item.Name);
                     }
-                    //else if (item.Value is byte[] byteArray)
-                    //{
-                    //    // Add byte array content (assume file data)
-                    //    var fileContent = new ByteArrayContent(byteArray);
-                    //    fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/octet-stream");
-                    //    formData.Add(fileContent, item.Name, "file.bin");
-                    //}
-                    //else if (item.Value is FileData file)
-                    //{
-                    //    // Add file content (file details are passed)
-                    //    var fileBytes = System.IO.File.ReadAllBytes(file.FilePath);
-                    //    var fileContent = new ByteArrayContent(fileBytes);
-                    //    fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
-                    //    formData.Add(fileContent, item.Name, file.FileName);
-                    //}
+                    else if (item.Value is FileData file)
+                    {
+                        // Add file content (file details are passed)
+                        var fileContent = new ByteArrayContent(file.Data);
+                        fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.MimeType);
+                        formData.Add(fileContent, item.Name, "image.png");
+                    }
                     else
                     {
                         throw new ArgumentException($"Unsupported data type for item {item.Name}");

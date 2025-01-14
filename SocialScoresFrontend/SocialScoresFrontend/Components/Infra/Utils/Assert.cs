@@ -9,5 +9,13 @@
                 throw new NullReferenceException(message);
             }
         }
+
+        public static void That(bool condition, string message)
+        {
+            if (!condition)
+            {
+                throw new Exception(message);
+            }
+        }
     }
 }
