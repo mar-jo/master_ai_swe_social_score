@@ -82,7 +82,7 @@ namespace SocialScoresFrontend.Components.Infra.Requests
                     }
                 }
 
-                HttpResponseMessage response = await _client.PostAsync(route, formData);
+                HttpResponseMessage response = await _client.PostAsync($"{BaseUrl}{route}", formData);
                 response.EnsureSuccessStatusCode();
 
                 string json = await response.Content.ReadAsStringAsync();

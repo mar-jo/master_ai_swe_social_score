@@ -8,36 +8,43 @@
 
 <h3>Profile</h3>
 
-<div>
-    <h4>Account Details</h4>
-    <p><strong>Username:</strong> @loaded?.Username</p>
-    <p><strong>Email:</strong> @loaded?.Email</p>
-    <p><strong>Score:</strong> @loaded?.SocialScore</p>
-</div>
+@if(loaded != null)
+{
+    <div>
+        <h4>Account Details</h4>
+        <p><strong>Username:</strong> @loaded?.Username</p>
+        <p><strong>Email:</strong> @loaded?.Email</p>
+        <p><UpDownVoteComponent Account="loaded" /></p>
+    </div>
 
-<button class="btn btn-primary" @onclick="NavigateToNewPost">
-    <i class="fa fa-plus"></i> New Post
-</button>
+    <button class="btn btn-primary" @onclick="NavigateToNewPost">
+        <i class="fa fa-plus"></i> New Post
+    </button>
 
-<!-- Posts Section -->
-<div>
-    <h4>User Posts</h4>
-    @if (posts != null && posts?.Length != 0)
-    {
-        foreach (var post in posts)
+    <!-- Posts Section -->
+    <div>
+        <h4>User Posts</h4>
+        @if (posts != null && posts?.Length != 0)
         {
-            <div class="post">
-                <img src="/favicon.png" alt="Post image" class="post-image" />
-                <p class="caption">@post.Text</p>
-                <p class="caption">@post.TimeCreated.ToShortDateString()</p>
-            </div>
+            foreach (var post in posts)
+            {
+                <div class="post">
+                    <img src="/favicon.png" alt="Post image" class="post-image" />
+                    <p class="caption">@post.Text</p>
+                    <p class="caption">@post.TimeCreated.ToShortDateString()</p>
+                </div>
+            }
         }
-    }
-    else
-    {
-        <p>No posts available.</p>
-    }
-</div>
+        else
+        {
+            <p>No posts available.</p>
+        }
+    </div>
+}
+else
+{
+	<p>Loading...</p>
+}
 
 @code {
 	[Parameter]

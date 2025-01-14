@@ -60,8 +60,8 @@ namespace SocialScoresFrontend.Components.Infra.Requests
         {
             FormDataItem[] formDataItems = new FormDataItem[]
             {
-                new FormDataItem("account_id", accountId),
-                new FormDataItem("delta", delta)
+                new FormDataItem("account_id", accountId.ToString()),
+                new FormDataItem("delta", delta.ToString())
             };
 
             AccountDetails deltaedAccount = await client.PostForm<AccountDetails>(UpdateSocialScoreRoute, formDataItems);
