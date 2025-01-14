@@ -54,6 +54,7 @@
         {
             fileData = new FileData();
             fileData.MimeType = file.ContentType;
+            fileData.FileName = file.Name;
             fileData.Data = new byte[file.Size];
             await file.OpenReadStream(maxAllowedSize: 1024000).ReadAsync(fileData.Data); // 1 MB max size
             previewImage = $"data:{file.ContentType};base64,{Convert.ToBase64String(fileData.Data)}";

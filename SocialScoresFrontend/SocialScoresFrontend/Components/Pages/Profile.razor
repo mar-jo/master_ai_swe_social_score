@@ -29,7 +29,12 @@
             foreach (var post in posts)
             {
                 <div class="post">
-                    <img src="/favicon.png" alt="Post image" class="post-image" />
+                    @* <img src="/favicon.png" alt="Post image" class="post-image" /> *@
+                    @if(post.Imagedata != null && post.MimeType != null)
+                    {
+                        <img src="@ConvertByteToImageString(post.Imagedata, post.MimeType)" alt="Preview" style="max-width: 100%; height: auto;" />
+                    }
+
                     <p class="caption">@post.Text</p>
                     <p class="caption">@post.TimeCreated.ToShortDateString()</p>
                 </div>
@@ -55,13 +60,18 @@ else
 		Assert.NotNull(Id, "The Id provided to the pofile page was not valid");
 		loaded = await AccountRequests.GetAccount(Id!.Value);
 
-		posts = PostRequests.GetPostsForAccount(Id.Value);
+		 posts = await PostRequests.GetPostsForAccount(Id.Value);
 	}
 
     private void NavigateToNewPost()
     {
         Navigation.NavigateTo("/newpost/"+Id);
     }
+
+	private string ConvertByteToImageString(byte[] data, string mimeType)
+	{
+        return $"data:{mimeType};base64,{Convert.ToBase64String(data)}";
+	}
 
 	private Account? loaded;
 	private Post[]? posts;

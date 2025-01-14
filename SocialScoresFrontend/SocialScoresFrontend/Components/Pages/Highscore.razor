@@ -23,7 +23,7 @@
     protected override async Task OnInitializedAsync()
     {
         accounts = await AccountRequests.GetRandomAccounts(100);
-		accounts = accounts.OrderDescending(x => x.SocialScore).ToArray();
+        accounts = accounts.OrderByDescending(x => x.SocialScore).ToArray();
     }
 
     private Account[]? accounts;
