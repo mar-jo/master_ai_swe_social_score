@@ -11,20 +11,23 @@ class Image(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     filename = Column(String, nullable=False)
     binary_data = Column(LargeBinary, nullable=False)  # Store binary data
+    resized_binary_data = Column(LargeBinary, nullable=True)  # Store resized binary data
     uploader = Column(String, nullable=False)
     time_created = Column(TIMESTAMP, server_default=func.now())
 
     post = relationship("Post", back_populates="image")
 
-    def __init__(self, filename: str, binary_data: bytes, uploader: str):
+    def __init__(self, filename: str, binary_data: bytes, uploader: str, resized_binary_data: bytes = None):
         self.filename = filename
         self.binary_data = binary_data
+        self.resized_binary_data = resized_binary_data
         self.uploader = uploader
 
 # Pydantic Schemas
 class ImageBase(BaseModel):
     filename: str
     binary_data: bytes
+    resized_binary_data: bytes | None
     uploader: str
 
 class ImageCreate(ImageBase):

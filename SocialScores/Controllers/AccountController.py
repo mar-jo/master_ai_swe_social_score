@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from SocialScores.Database.RepositoryAccount import RepositoryAccount
 from SocialScores.Database.RepositoryImage import RepositoryImage
 from SocialScores.Controllers.PostController import PostController
+from SocialScores.Controllers.ImageController import ImageController
 from SocialScores.Models.Account import AccountRegister, AccountLogin, AccountResponse
 from SocialScores.Database.Database import get_db
 
@@ -104,11 +105,13 @@ def upload_profile_picture(account_id: int = Form(...), image: UploadFile = File
         uploader=str(account_id)
     )
 
+    ImageController.send_resize_request(new_image.id)
+
     updated_account = account_repo.update_profile_image(account_id, new_image.id)
     return {"message": "Profile picture updated", "account": updated_account}
 
 @router.get("/get-profile-picture")
-def get_profile_picture(account_id: int, db: Session = Depends(get_db)):
+def get_profile_picture(account_id: int, size: str = "full", db: Session = Depends(get_db)):
     account_repo = RepositoryAccount(db)
 
     account = account_repo.get_account_by_id(account_id)
@@ -117,8 +120,15 @@ def get_profile_picture(account_id: int, db: Session = Depends(get_db)):
 
     image = account.profile_image
 
+    if size == "resized" and image.resized_binary_data:
+        binary_data = image.resized_binary_data
+    elif size == "full" and image.binary_data:
+        binary_data = image.binary_data
+    else:
+        raise HTTPException(status_code=400, detail="Requested image size not available")
+
     import imghdr
-    image_type = imghdr.what(None, image.binary_data)
+    image_type = imghdr.what(None, binary_data)
     mime_type = f"image/{image_type}" if image_type else "application/octet-stream"
 
-    return StreamingResponse(io.BytesIO(image.binary_data), media_type=mime_type)
+    return StreamingResponse(io.BytesIO(binary_data), media_type=mime_type)
