@@ -1,4 +1,5 @@
-﻿using SocialScoresFrontend.Components.Models;
+﻿using SocialScoresFrontend.Components.Infra.Utils;
+using SocialScoresFrontend.Components.Models;
 
 namespace SocialScoresFrontend.Components.Infra.Requests
 {
@@ -9,6 +10,7 @@ namespace SocialScoresFrontend.Components.Infra.Requests
         private const string GetAccountRoute = "account/info";
         private const string GetRandomAccountsRoute = "account/explore";
         private const string UpdateSocialScoreRoute = "account/update-socialscore";
+        private const string UploadProfilePictureRoute = "account/profile-picture";
 
         public AccountRequests(BackendClient client)
         {
@@ -69,6 +71,38 @@ namespace SocialScoresFrontend.Components.Infra.Requests
             return true;
         }
 
+        public async Task UploadProfilePicture(int accountId, FileData fileData)
+        {
+            FormDataItem[] formDataItems = new FormDataItem[]
+            {
+                new FormDataItem("account_id", accountId.ToString()),
+                new FormDataItem("image", fileData)
+            };
+
+            UploadProfilePictureResponse uploadProfilePictureResponse = await client.PostForm<UploadProfilePictureResponse>(UploadProfilePictureRoute, formDataItems);
+            Assert.NotNull(uploadProfilePictureResponse.account.profile_image_id, "The profile image id should not be null here.");
+        }
+
+        public async Task<FileData> GetProfilePicture(int accountId)
+        {
+            FileData fileData = new();
+
+            await client.GetCustom(
+                $"get-profile-picture?account_id={accountId}&size=resized",
+                response =>
+                {
+                    string mimetype = response.Content.Headers.ContentType!.MediaType!;
+                    byte[] data = response.Content.ReadAsByteArrayAsync().Result;
+
+                    fileData.FileName = "profilePicture";
+                    fileData.MimeType = mimetype;
+                    fileData.Data = data;
+                }
+            );
+
+            return fileData;
+        }
+
         private static Account GetAccountFromDetails(AccountDetails details)
         {
             return new Account()
@@ -83,6 +117,12 @@ namespace SocialScoresFrontend.Components.Infra.Requests
         }
 
         private readonly BackendClient client;
+    }
+
+    public class UploadProfilePictureResponse
+    {
+        public required string message { get; set; }
+        public AccountDetails account { get; set; }
     }
 
     public class AccountDetails

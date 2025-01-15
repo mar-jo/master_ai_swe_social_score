@@ -12,6 +12,19 @@
 {
     <div>
         <h4>Account Details</h4>
+        @if(profilePicture != null)
+        {
+            <img src="@profilePicture" alt="Preview" style="max-width: 100%; height: auto;" />
+        }
+        else
+        {
+            <img src="/Unknown.png" alt="Post image" class="post-image" />
+        }
+        <div>
+            <label for="imageUpload">Change Profile Picture</label>
+            <InputFile OnChange="HandleFileSelected" />
+        </div>
+
         <p><strong>Username:</strong> @loaded?.Username</p>
         <p><strong>Email:</strong> @loaded?.Email</p>
         <p><UpDownVoteComponent Account="loaded" /></p>
@@ -48,31 +61,51 @@
 }
 else
 {
-	<p>Loading...</p>
+    <p>Loading...</p>
 }
 
 @code {
-	[Parameter]
-	public int? Id { get; set; }
+    [Parameter]
+    public int? Id { get; set; }
 
-	protected override async Task OnInitializedAsync()
-	{
-		Assert.NotNull(Id, "The Id provided to the pofile page was not valid");
-		loaded = await AccountRequests.GetAccount(Id!.Value);
+    protected override async Task OnInitializedAsync()
+    {
+        Assert.NotNull(Id, "The Id provided to the pofile page was not valid");
+        loaded = await AccountRequests.GetAccount(Id!.Value);
 
-		 posts = await PostRequests.GetPostsForAccount(Id.Value);
-	}
+        posts = await PostRequests.GetPostsForAccount(Id.Value);
+    }
+
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        if (file != null)
+        {
+            FileData fileData = new FileData();
+            fileData.MimeType = file.ContentType;
+            fileData.FileName = file.Name;
+            fileData.Data = new byte[file.Size];
+            await file.OpenReadStream(maxAllowedSize: 1024000).ReadAsync(fileData.Data); // 1 MB max size
+
+			await AccountRequests.UploadProfilePicture(Id!.Value, fileData);
+			FileData processedProfilePicture = await AccountRequests.GetProfilePicture(Id!.Value);
+			profilePicture = $"data:{processedProfilePicture.MimeType};base64,{Convert.ToBase64String(processedProfilePicture.Data)}";
+
+			await InvokeAsync(StateHasChanged);
+        }
+    }
 
     private void NavigateToNewPost()
     {
         Navigation.NavigateTo("/newpost/"+Id);
     }
 
-	private string ConvertByteToImageString(byte[] data, string mimeType)
-	{
+    private string ConvertByteToImageString(byte[] data, string mimeType)
+    {
         return $"data:{mimeType};base64,{Convert.ToBase64String(data)}";
-	}
+    }
 
-	private Account? loaded;
-	private Post[]? posts;
+    private Account? loaded;
+    private Post[]? posts;
+    private string? profilePicture;
 }

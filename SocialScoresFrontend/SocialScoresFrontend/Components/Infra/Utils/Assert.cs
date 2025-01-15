@@ -1,8 +1,11 @@
-﻿namespace SocialScoresFrontend.Components.Infra.Utils
+﻿
+namespace SocialScoresFrontend.Components.Infra.Utils
 {
+    using System.Diagnostics.CodeAnalysis;
+
     public static class Assert
     {
-        public static void NotNull(object? obj, string message)
+        public static void NotNull( [NotNull]object? obj, string message)
         {
             if (obj == null)
             {

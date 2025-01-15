@@ -30,6 +30,20 @@ namespace SocialScoresFrontend.Components.Infra.Requests
             }
         }
 
+        public async Task GetCustom(string route, Action<HttpResponseMessage> action)
+        {
+            try
+            {
+                var response = await _client.GetAsync($"{BaseUrl}{route}");
+                response.EnsureSuccessStatusCode();
+                action(response);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
         public async Task<T> Post<T>(string route, object payload)
         {
             try
