@@ -6,13 +6,11 @@ on:
       - main
       - Development
       - Frontend
-      - microservices
   pull_request:
     branches:
       - main
       - Development
       - Frontend
-      - microservices
 
 jobs:
   test:

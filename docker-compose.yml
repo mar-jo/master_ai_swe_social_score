@@ -57,5 +57,20 @@ services:
       retries: 5
     restart: unless-stopped
 
+  text-generation:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - RABBITMQ_USER=${RABBITMQ_USER}
+      - RABBITMQ_PASS=${RABBITMQ_PASS}
+      - RABBITMQ_HOST=${RABBITMQ_HOST}
+      - RABBITMQ_PORT=${RABBITMQ_PORT}
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    working_dir: /app/SocialScores/Services
+    command: ["python", "TextGenerationService.py"]
+
 volumes:
   postgres_data:
