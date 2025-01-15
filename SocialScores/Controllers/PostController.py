@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, Query, HTTPException, UploadFile, File, 
 from sqlalchemy.orm import Session
 from SocialScores.Database.RepositoryPosts import RepositoryPosts
 from SocialScores.Database.RepositoryImage import RepositoryImage
+from SocialScores.Controllers.ImageController import ImageController
 from typing import Optional
 import base64
 from SocialScores.Models.Post import PostBase
@@ -21,6 +22,8 @@ class PostController:
                 uploader=user
             )
             image_id = new_image.id
+
+            ImageController.send_resize_request(image_id)
         else:
             image_id = None
 
@@ -32,11 +35,12 @@ class PostController:
         )
         return new_post
 
-    def get_post(self, post_id: int):
+    def get_post(self, post_id: int, resized: bool = False):
         post = self.repo.get_post_by_id(post_id)
 
         if not post:
             raise HTTPException(status_code=404, detail="Post not found")
+
         return {
             "id": post.id,
             "user": post.user,
@@ -45,13 +49,15 @@ class PostController:
             "time_created": post.time_created,
             "image": {
                 "filename": post.image.filename,
-                "data": base64.b64encode(post.image.binary_data).decode("utf-8"),
+                "data": base64.b64encode(
+                    post.image.resized_binary_data if resized else post.image.binary_data
+                ).decode("utf-8"),
                 "uploader": post.image.uploader,
                 "time_created": post.image.time_created,
             } if post.image else None,
         }
 
-    def get_latest_posts(self, limit: int = 10):
+    def get_latest_posts(self, limit: int = 10, resized: bool = False):
         posts = self.repo.get_latest_posts(limit)
         return [
             {
@@ -62,7 +68,9 @@ class PostController:
                 "time_created": post.time_created,
                 "image": {
                     "filename": post.image.filename,
-                    "data": base64.b64encode(post.image.binary_data).decode("utf-8"),
+                    "data": base64.b64encode(
+                        post.image.resized_binary_data if resized else post.image.binary_data
+                    ).decode("utf-8"),
                     "uploader": post.image.uploader,
                     "time_created": post.image.time_created,
                 } if post.image else None,
@@ -70,7 +78,7 @@ class PostController:
             for post in posts
         ]
 
-    def search_posts(self, query: str):
+    def search_posts(self, query: str, resized: bool = False):
         posts = self.repo.search_posts(query)
         return [
             {
@@ -81,7 +89,9 @@ class PostController:
                 "time_created": post.time_created,
                 "image": {
                     "filename": post.image.filename,
-                    "data": base64.b64encode(post.image.binary_data).decode("utf-8"),
+                    "data": base64.b64encode(
+                        post.image.resized_binary_data if resized else post.image.binary_data
+                    ).decode("utf-8"),
                     "uploader": post.image.uploader,
                     "time_created": post.image.time_created,
                 } if post.image else None,
@@ -118,17 +128,16 @@ def create_post(user: str = Form(...), account_id: int = Form(...), text: str = 
     return controller.create_post(user=user, account_id=account_id, text=text, image=image)
 
 @router.get("/action/search/")
-async def search_posts(query: str, db: Session = Depends(get_db)):
+async def search_posts(query: str, resized: bool = Query(False), db: Session = Depends(get_db)):
     controller = PostController(db)
-    return controller.search_posts(query)
+    return controller.search_posts(query, resized=resized)
 
 @router.get("/action/latest/")
-async def get_latest_posts(limit: int = 10, db: Session = Depends(get_db)):
+async def get_latest_posts(limit: int = 10, resized: bool = Query(False), db: Session = Depends(get_db)):
     controller = PostController(db)
-    return controller.get_latest_posts(limit)
+    return controller.get_latest_posts(limit=limit, resized=resized)
 
 @router.get("/{post_id}")
-async def get_post(post_id: int, db: Session = Depends(get_db)):
+async def get_post(post_id: int, resized: bool = Query(False), db: Session = Depends(get_db)):
     controller = PostController(db)
-    return controller.get_post(post_id)
-
+    return controller.get_post(post_id, resized=resized)

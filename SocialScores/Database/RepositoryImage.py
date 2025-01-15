@@ -13,6 +13,11 @@ class RepositoryImage:
 
         return new_image
 
+    def add_resized_image(self, image_id: int, resized_binary_data: bytes):
+        image = self.get_image_by_id(image_id)
+        image.resized_binary_data = resized_binary_data
+        self.db.commit()
+
     def get_image_by_id(self, image_id: int):
         return self.db.query(Image).filter_by(id=image_id).first()
 

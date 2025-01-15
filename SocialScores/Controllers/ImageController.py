@@ -4,13 +4,28 @@ from SocialScores.Database.RepositoryImage import RepositoryImage
 from SocialScores.Models.Image import ImageBase, ImageResponse
 from SocialScores.Database.Database import get_db
 from typing import List
+import pika
 
 class ImageController:
     def __init__(self, db: Session):
         self.repo = RepositoryImage(db)
 
     def add_image(self, filename: str, binary_data: bytes, uploader: str):
-        return self.repo.add_image(filename=filename, binary_data=binary_data, uploader=uploader)
+        image = self.repo.add_image(filename=filename, binary_data=binary_data, uploader=uploader)
+
+        ImageController.send_resize_request(image.id)
+        return image
+
+    @staticmethod
+    def send_resize_request(image_id: int) -> None:
+        try:
+            connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
+            channel = connection.channel()
+            channel.queue_declare(queue='resize_queue')
+            channel.basic_publish(exchange='', routing_key='resize_queue', body=str(image_id))
+            connection.close()
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Failed to send resize request: {str(e)}")
 
     def get_image_by_id(self, image_id: int):
         image = self.repo.get_image_by_id(image_id)
