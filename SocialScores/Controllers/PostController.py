@@ -7,6 +7,7 @@ from typing import Optional
 import base64
 from SocialScores.Models.Post import PostBase
 from SocialScores.Database.Database import get_db
+from SocialScores.Services.TextGenerationService import TextGenerationService
 
 class PostController:
     def __init__(self, db):
@@ -121,6 +122,7 @@ class PostController:
         ]
 
 router = APIRouter()
+text_gen_service = TextGenerationService()
 
 @router.post("/")
 def create_post(user: str = Form(...), account_id: int = Form(...), text: str = Form(None), image: UploadFile = File(None), db: Session = Depends(get_db)):
@@ -141,3 +143,12 @@ async def get_latest_posts(limit: int = 10, resized: bool = Query(False), db: Se
 async def get_post(post_id: int, resized: bool = Query(False), db: Session = Depends(get_db)):
     controller = PostController(db)
     return controller.get_post(post_id, resized=resized)
+
+@router.post("/generate")
+def generate_post(account_id: int, user: str, prompt: str, image: UploadFile = File(None), db: Session = Depends(get_db)):
+    controller = PostController(db)
+    generated_text = text_gen_service.generate_text(prompt)
+    if not generated_text:
+        raise HTTPException(status_code=500, detail="Failed to generate text.")
+    new_post = controller.create_post(user=user, account_id=account_id, text=generated_text, image=image)
+    return {"message": "Post created with generated content", "post": new_post}
