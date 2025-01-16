@@ -1,0 +1,40 @@
+﻿@using SocialScoresFrontend.Components.Infra.Requests
+@using SocialScoresFrontend.Components.Models
+@inject PostRequests PostRequests
+
+<div class="search-bar" style="display: flex; align-items: center; margin: 10px;">
+    <input  @bind="SearchText"
+    type="text"
+    placeholder="Enter post text"
+    style="
+                flex: 1;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 25px 0 0 25px;
+                outline: none;
+                margin-right: -1px;"
+    />
+    <button style="
+                padding: 10px 20px;
+                border: 1px solid #ccc;
+                border-radius: 0 25px 25px 0;
+                background-color: #007BFF;
+                color: white;
+                cursor: pointer;"
+    @onclick="@SearchPosts">
+        Search
+    </button>
+</div>
+
+@code {
+    public string? SearchText { get; set; } = string.Empty;
+
+    [Parameter]
+    public EventCallback<Post[]> OnSearchResultsChanged { get; set; }
+
+    private async Task SearchPosts()
+    {
+		Post[]? posts = await PostRequests.GetPostsBySearchText(SearchText);
+		await OnSearchResultsChanged.InvokeAsync(posts);
+    }
+}

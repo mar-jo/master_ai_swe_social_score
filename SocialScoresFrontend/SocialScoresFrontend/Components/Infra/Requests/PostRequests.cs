@@ -5,6 +5,7 @@ namespace SocialScoresFrontend.Components.Infra.Requests
     public class PostRequests
     {
         private const string CreateNewPostRoute = "post";
+        private const string GetPostsBySearchTextRoute = "post/action/search";
 
         public PostRequests(BackendClient client)
         {
@@ -58,13 +59,24 @@ namespace SocialScoresFrontend.Components.Infra.Requests
             }
             catch (HttpRequestException ex)
             {
-                if(ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
                     return [];
                 }
 
                 throw;
             }
+        }
+
+        public async Task<Post[]> GetPostsBySearchText(string? searchText)
+        {
+            if (string.IsNullOrEmpty(searchText))
+            {
+                return [];
+            }
+
+            PostDetail[] postDetails = await client.Get<PostDetail[]>(GetPostsBySearchTextRoute + $"?query={searchText}&resized=false");
+            return postDetails.Select(ConvertPostDetailToPost).ToArray();
         }
 
         private static Post ConvertPostDetailToPost(PostDetail detail)
@@ -77,8 +89,18 @@ namespace SocialScoresFrontend.Components.Infra.Requests
                 TimeCreated = DateTime.Parse(detail.time_created),
                 Text = detail.text,
                 Imagedata = detail.image.data,
-                MimeType = ConvertFileExtensionToMimeType(Path.GetExtension(detail.image.filename))
+                MimeType = GetMimeTypeFromImage(detail.image)
             };
+        }
+
+        private static string? GetMimeTypeFromImage(ImageDetail image)
+        {
+            if (string.IsNullOrEmpty(image.filename))
+            {
+                return null;
+            }
+
+            return ConvertFileExtensionToMimeType(Path.GetExtension(image.filename));
         }
 
         private static string ConvertFileExtensionToMimeType(string extension)

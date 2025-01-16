@@ -1,0 +1,39 @@
+﻿@page "/search-posts"
+@using SocialScoresFrontend.Components.Models
+
+<div style="display:flex; align-items: center; margin-bottom: 20px;">
+	<h3>SearchPosts</h3>
+	<SocialScoresFrontend.Components.Infra.UI.PostSearchComponent OnSearchResultsChanged="OnSearchResultsChanged"/>
+</div>
+
+@if(posts.Length != 0)
+{
+	@foreach (var post in posts)
+	{
+		<div class="post">
+			@if(post.Imagedata != null && post.MimeType != null)
+			{
+				<img src="@ConvertByteToImageString(post.Imagedata, post.MimeType)" alt="Preview" style="max-width: 100%; height: auto;" />
+			}
+			<p class="caption">@post.Text</p>
+		</div>
+	}
+}
+else{
+	<p>No items to display</p>
+}
+
+@code {
+	private Post[] posts = [];
+
+	private void OnSearchResultsChanged(Post[] posts)
+	{
+		this.posts = posts;
+		InvokeAsync(StateHasChanged);
+	}
+
+	private string ConvertByteToImageString(byte[] data, string mimeType)
+	{
+		return $"data:{mimeType};base64,{Convert.ToBase64String(data)}";
+	}
+}
