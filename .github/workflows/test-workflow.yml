@@ -40,7 +40,7 @@ jobs:
 
       - name: Upload test results (optional)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: test-results
           path: .pytest_cache/
@@ -72,6 +72,6 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: SocialScoresFrontend/.
-          file: Dockerfile
+          file: SocialScoresFrontend/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/socialscoresfrontend:latest
