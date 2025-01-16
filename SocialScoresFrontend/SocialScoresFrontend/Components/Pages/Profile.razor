@@ -40,7 +40,7 @@
         </div>
     </div>
 
-    <div style="display:flex; align-items: center;">
+    <div style="display:flex; align-items: center; margin-bottom:20px;">
         <h4 style="margin:0 10px 0 0;">User Posts</h4>
         <button class="btn btn-primary" @onclick="NavigateToNewPost">
             +
@@ -87,8 +87,9 @@ else
         
         loaded = await AccountRequests.GetAccount(Id!.Value);
 
-        FileData processedProfilePicture = await AccountRequests.GetProfilePicture(Id!.Value);
-        profilePicture = $"data:{processedProfilePicture.MimeType};base64,{Convert.ToBase64String(processedProfilePicture.Data)}";
+        FileData? processedProfilePicture = await AccountRequests.GetProfilePicture(Id!.Value);
+        if (processedProfilePicture != null)
+            profilePicture = $"data:{processedProfilePicture.MimeType};base64,{Convert.ToBase64String(processedProfilePicture.Data)}";
 
         posts = await PostRequests.GetPostsForAccount(Id.Value);
     }

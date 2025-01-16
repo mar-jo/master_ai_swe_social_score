@@ -83,7 +83,7 @@ namespace SocialScoresFrontend.Components.Infra.Requests
             Assert.NotNull(uploadProfilePictureResponse.account.profile_image_id, "The profile image id should not be null here.");
         }
 
-        public async Task<FileData> GetProfilePicture(int accountId)
+        public async Task<FileData?> GetProfilePicture(int accountId)
         {
             FileData fileData = new();
 
@@ -102,22 +102,28 @@ namespace SocialScoresFrontend.Components.Infra.Requests
                     }
                 );
             }
-            catch
+            catch (HttpRequestException ex)
             {
-                await client.GetCustom(
-                    $"account/get-profile-picture?account_id={accountId}&size=full",
-                    response =>
-                    {
-                        string mimetype = response.Content.Headers.ContentType!.MediaType!;
-                        byte[] data = response.Content.ReadAsByteArrayAsync().Result;
+                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    return null;
+                }
+                else
+                {
+                    await client.GetCustom(
+                        $"account/get-profile-picture?account_id={accountId}&size=full",
+                        response =>
+                        {
+                            string mimetype = response.Content.Headers.ContentType!.MediaType!;
+                            byte[] data = response.Content.ReadAsByteArrayAsync().Result;
 
-                        fileData.FileName = "profilePicture";
-                        fileData.MimeType = mimetype;
-                        fileData.Data = data;
-                    }
-                );
+                            fileData.FileName = "profilePicture";
+                            fileData.MimeType = mimetype;
+                            fileData.Data = data;
+                        }
+                    );
+                }
             }
-
 
             return fileData;
         }

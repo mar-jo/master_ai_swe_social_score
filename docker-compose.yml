@@ -1,4 +1,15 @@
 services:
+  frontend:
+    # image: socialscoresfrontend:latest
+    build:
+      context: SocialScoresFrontend/.
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - API_URL=http://app:8000/api/v1/
+    networks:
+      - app-network
   app:
     build:
       context: .
@@ -22,7 +33,9 @@ services:
         condition: service_healthy
     volumes:
       - ./uploads:/app/uploads
-    command: uvicorn SocialScores.main:app --host 0.0.0.0 --port 8000
+    networks:
+      - app-network
+    #command: uvicorn SocialScores.main:app --host 0.0.0.0 --port 8000
 
   database:
     image: postgres:15
@@ -40,6 +53,8 @@ services:
       timeout: 5s
       retries: 5
     restart: unless-stopped
+    networks:
+      - app-network
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -56,6 +71,8 @@ services:
       timeout: 5s
       retries: 5
     restart: unless-stopped
+    networks:
+      - app-network
 
   text-generation:
     build:
@@ -71,6 +88,12 @@ services:
         condition: service_healthy
     working_dir: /app/SocialScores/Services
     command: ["python", "TextGenerationService.py"]
-
+    networks:
+      - app-network
+      
 volumes:
   postgres_data:
+
+networks:
+  app-network:
+    driver: bridge
