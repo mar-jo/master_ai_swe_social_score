@@ -68,10 +68,10 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/socialscores:latest
           
-      # - name: Build and Push Frontend Docker Image
-        # uses: docker/build-push-action@v4
-        # with:
-          # context: SocialScoresFrontend/.
-          # file: Dockerfile
-          # push: true
-          # tags: ${{ secrets.DOCKER_USERNAME }}/socialscoresfrontend:latest
+      - name: Build and Push Frontend Docker Image
+        uses: docker/build-push-action@v4
+        with:
+          context: SocialScoresFrontend/.
+          file: Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/socialscoresfrontend:latest
