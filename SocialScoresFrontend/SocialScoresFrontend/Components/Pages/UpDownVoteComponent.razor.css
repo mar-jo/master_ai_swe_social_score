@@ -1,0 +1,28 @@
+﻿.vote-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.vote-button {
+    padding: 5px 10px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.vote-score {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.vote-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.vote-score {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0 10px;
+    color: #333;
+}

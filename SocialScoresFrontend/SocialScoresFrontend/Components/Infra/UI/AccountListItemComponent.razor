@@ -1,0 +1,36 @@
+﻿@inject NavigationManager NavigationManager
+
+@using SocialScoresFrontend.Components.Models
+<div class="accountItemWrapper">
+	<span class="flexitem" style="margin-left:10px;"><strong>@Account?.Username</strong></span>
+	<span class="flexitem">@Account?.SocialScore</span>
+	<button class ="btn btn-primary" @onclick="GoToProfile">GoToProfile</button>
+</div>
+
+<style>
+	.accountItemWrapper
+	{
+		display: flex;
+		/* width: auto; */
+		/* width: 300px; */
+		align-items: center;
+		background-color: bisque; 
+		padding: 3px;
+		border-radius:3px;
+	}
+
+	.flexitem{
+		margin-right:10px;
+	}
+</style>
+
+@code {
+	[Parameter]
+	public Account? Account { get; set; }
+
+	private void GoToProfile()
+	{
+		// Navigate to the profile page
+		NavigationManager.NavigateTo($"/profile/{Account?.Id}");
+	}
+}

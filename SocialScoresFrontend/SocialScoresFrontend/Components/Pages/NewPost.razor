@@ -1,0 +1,103 @@
+﻿@page "/newpost/{id:int}"
+@using Microsoft.AspNetCore.Components.Forms
+@using System.ComponentModel.DataAnnotations
+@using SocialScoresFrontend.Components.Infra.Requests
+@using SocialScoresFrontend.Components.Infra.Utils
+@using SocialScoresFrontend.Components.Models
+@inject IJSRuntime JSRuntime
+@inject AccountRequests AccountRequests
+@inject PostRequests PostRequests
+@inject NavigationManager NavigationManager
+
+<h3>New Post</h3>
+
+<EditForm Model="post" OnValidSubmit="HandleSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label for="postText">Text</label>
+        <textarea id="postText" @bind="post.Text" class="form-control"></textarea>
+    </div>
+
+    <div style="margin-bottom: 20px;">
+        <label for="imageUpload">Upload Image</label>
+        <InputFile OnChange="HandleFileSelected" />
+    </div>
+
+    <div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="button" @onclick="AutoGenerate" class="btn btn-primary">$hit Post</button>
+    </div>
+</EditForm>
+
+@if (!string.IsNullOrEmpty(previewImage))
+{
+    <div>
+        <h5>Image Preview:</h5>
+
+        <img src="@previewImage" alt="Preview" style="max-width: 100%; height: auto;" />
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    private PostModel post = new();
+    private string? previewImage;
+    private FileData? fileData;
+
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        if (file != null)
+        {
+            fileData = new FileData();
+            fileData.MimeType = file.ContentType;
+            fileData.FileName = file.Name;
+            fileData.Data = new byte[file.Size];
+            await file.OpenReadStream(maxAllowedSize: 1024000).ReadAsync(fileData.Data); // 1 MB max size
+            previewImage = $"data:{file.ContentType};base64,{Convert.ToBase64String(fileData.Data)}";
+        }
+    }
+
+    private async Task AutoGenerate()
+    {
+        Assert.NotNull(loaded, "The account must be loaded before submitting a post.");
+        Assert.NotNull(post?.Text, "The post prompt must not be null");
+
+        var response = await PostRequests.Generate(loaded.Id, loaded.Username, post!.Text!, fileData);
+
+        NavigationManager.NavigateTo("profile/" + Id, forceLoad: true);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Assert.NotNull(Id, "The Id provided to the pofile page was not valid");
+        loaded = await AccountRequests.GetAccount(Id!.Value);
+    }
+
+    private void HandleSubmit()
+    {
+        Assert.NotNull(loaded, "The account must be loaded before submitting a post.");
+        Assert.NotNull(fileData, "An image must be selected before submitting a post.");
+        Assert.That(fileData!.Data.Length > 0, "The image must not be empty.");
+        Assert.NotNull(post?.Text, "The post text must not be null.");
+        Assert.That(post!.Text!.Length > 0, "The post text must not be empty.");
+
+        var response = PostRequests.CreateNewPost(loaded!.Id, loaded.Username, post!.Text, fileData);
+
+        NavigationManager.NavigateTo("profile/" + Id, forceLoad: true);
+    }
+
+    private Account? loaded;
+
+    // Models for the view
+    public class PostModel
+    {
+        [Required]
+        [StringLength(500, ErrorMessage = "Text must be 500 characters or less.")]
+        public string? Text { get; set; }
+    }
+}

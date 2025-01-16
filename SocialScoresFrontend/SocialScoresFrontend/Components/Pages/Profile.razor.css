@@ -1,0 +1,27 @@
+﻿.post {
+    margin-bottom: 20px;
+}
+
+.post-image {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+.caption {
+    font-style: italic;
+    margin-top: 10px;
+}
+
+.profile-img {
+    width: 150px; /* Adjust the width */
+    height: 150px; /* Adjust the height */
+    border: 1px solid black;
+    border-radius: 50%; /* Makes the image a circle */
+}
+
+.change-profile-picture-label {
+    cursor: pointer;
+    text-decoration-line: underline;
+    margin-top: 3px;
+}

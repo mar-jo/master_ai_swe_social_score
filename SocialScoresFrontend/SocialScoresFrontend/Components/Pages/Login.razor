@@ -1,0 +1,66 @@
+﻿@page "/"
+@using SocialScoresFrontend.Components.Infra.Requests
+@using SocialScoresFrontend.Components.Infra.Session
+@using SocialScoresFrontend.Components.Infra.Utils
+@using SocialScoresFrontend.Components.Models
+@using System.ComponentModel.DataAnnotations
+@inject SessionAccountCache accountCache
+@inject AccountRequests accountRequests;
+@inject NavigationManager navigationManager;
+
+
+<div class="login-container">
+    <div class="login-box">
+        <h2>Login</h2>
+        <EditForm Model="User" OnValidSubmit="OnRegister" FormName="LoginForm">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <div class="form-group">
+                <label for="username">Username</label>
+                <InputText class="form-control" @bind-Value="User!.Username" />
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <InputText type="password" class="form-control" @bind-Value="User!.Password" />
+            </div>
+            <button type="submit" class="btn btn-primary">Login</button>
+        </EditForm>
+    </div>
+
+    <!-- Navigation Link to Register Page -->
+    <p>
+        Don't have an account? <NavLink href="/register">Register here</NavLink>.
+    </p>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private LoginFromModel? User { get; set; }
+
+    protected override void OnInitialized()
+    {
+        User ??= new();
+    }
+
+    private async Task OnRegister()
+    {
+        Assert.NotNull(User, "Fatal error the user object is not set");
+
+        int id = await accountRequests.Login(User.Username!, User.Password!);
+        accountCache.SetAccount(id);
+
+        if (accountCache.IsLoggedIn())
+        {
+            navigationManager.NavigateTo("/profile/"+id);
+            StateHasChanged();
+        }
+    }
+
+    public class LoginFromModel
+    {
+        [Required]
+        public string? Username { get; set; }
+        [Required]
+        public string? Password { get; set; }
+    }
+}

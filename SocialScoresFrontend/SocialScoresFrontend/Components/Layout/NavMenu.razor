@@ -1,0 +1,50 @@
+﻿@using SocialScoresFrontend.Components.Infra.Session
+@using SocialScoresFrontend.Components.Infra.Utils
+@inject SessionAccountCache AccountCache;
+
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">SocialScores</a>
+    </div>
+</div>
+
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="@ProfileUrl">
+                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Profil
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/explore">
+                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Explore
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/search-posts">
+                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Search Posts
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/highscore">
+                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Leaderbords
+            </NavLink>
+        </div>
+    </nav>
+</div>
+
+@code{
+    private string ProfileUrl { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Assert.NotNull(AccountCache.AccountId, "The profile cache is not initialized yet. Cant show profile page");
+        ProfileUrl = "profile/" + AccountCache.AccountId.ToString();
+    }
+}
+
