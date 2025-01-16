@@ -51,7 +51,7 @@
 
         if (accountCache.IsLoggedIn())
         {
-            navigationManager.NavigateTo("/home");
+            navigationManager.NavigateTo("/profile/"+id);
             StateHasChanged();
         }
     }
