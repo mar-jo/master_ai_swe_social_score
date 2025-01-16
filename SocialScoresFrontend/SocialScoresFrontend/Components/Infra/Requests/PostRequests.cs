@@ -6,7 +6,7 @@ namespace SocialScoresFrontend.Components.Infra.Requests
     {
         private const string CreateNewPostRoute = "post";
         private const string GetPostsBySearchTextRoute = "post/action/search";
-
+        private const string AutoGenerate = "post/generate";
         public PostRequests(BackendClient client)
         {
             this.client = client;
@@ -79,6 +79,28 @@ namespace SocialScoresFrontend.Components.Infra.Requests
             return postDetails.Select(ConvertPostDetailToPost).ToArray();
         }
 
+        public async Task<CreateNewPostResponse> Generate(int accountId, string username, string prompt, FileData? fileData)
+        {
+            FormDataItem[] formDataItems = new FormDataItem[1];
+            if (fileData != null)
+            {
+                formDataItems[0] = new FormDataItem("image", fileData);
+            }
+            else
+            {
+                FileData fake = new()
+                {
+                    Data = new byte[0],
+                    FileName = "",
+                    MimeType = ""
+                };
+                formDataItems[0] = new FormDataItem("image", fake);
+            }
+
+            GenerateNewPostResponse response = await client.PostForm<GenerateNewPostResponse>(AutoGenerate + $"?account_id={accountId}&user={username}&prompt={prompt}", formDataItems);
+            return response.post;
+        }
+
         private static Post ConvertPostDetailToPost(PostDetail detail)
         {
             return new Post()
@@ -137,6 +159,12 @@ namespace SocialScoresFrontend.Components.Infra.Requests
         public byte[] data { get; set; }
         public string uploader { get; set; }
         public string time_created { get; set; }
+    }
+
+    public class GenerateNewPostResponse
+    {
+        public string message { get; set; }
+        public CreateNewPostResponse post { get; set; }
     }
 
     public class CreateNewPostResponse

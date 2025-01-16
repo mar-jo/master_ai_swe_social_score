@@ -20,13 +20,14 @@
         <textarea id="postText" @bind="post.Text" class="form-control"></textarea>
     </div>
 
-    <div>
+    <div style="margin-bottom: 20px;">
         <label for="imageUpload">Upload Image</label>
         <InputFile OnChange="HandleFileSelected" />
     </div>
 
     <div>
         <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="button" @onclick="AutoGenerate" class="btn btn-primary">$hit Post</button>
     </div>
 </EditForm>
 
@@ -61,6 +62,16 @@
         }
     }
 
+    private async Task AutoGenerate()
+    {
+        Assert.NotNull(loaded, "The account must be loaded before submitting a post.");
+        Assert.NotNull(post?.Text, "The post prompt must not be null");
+
+        var response = await PostRequests.Generate(loaded.Id, loaded.Username, post!.Text!, fileData);
+
+        NavigationManager.NavigateTo("profile/" + Id, forceLoad: true);
+    }
+
     protected override async Task OnInitializedAsync()
     {
         Assert.NotNull(Id, "The Id provided to the pofile page was not valid");
@@ -77,7 +88,7 @@
 
         var response = PostRequests.CreateNewPost(loaded!.Id, loaded.Username, post!.Text, fileData);
 
-        NavigationManager.NavigateTo("profile/" + Id);
+        NavigationManager.NavigateTo("profile/" + Id, forceLoad: true);
     }
 
     private Account? loaded;

@@ -80,8 +80,11 @@ namespace SocialScoresFrontend.Components.Infra.Requests
                     {
                         // Add file content (file details are passed)
                         var fileContent = new ByteArrayContent(file.Data);
-                        fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.MimeType);
-                        formData.Add(fileContent, item.Name, "image.png");
+                        if(string.IsNullOrEmpty(file.MimeType) == false)
+                            fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.MimeType);
+                        if (string.IsNullOrEmpty(file.FileName))
+                            file.FileName = "unknown.png";
+                        formData.Add(fileContent, item.Name, file.FileName);
                     }
                     else
                     {
