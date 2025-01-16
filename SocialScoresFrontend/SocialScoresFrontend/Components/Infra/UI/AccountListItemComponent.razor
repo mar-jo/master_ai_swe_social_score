@@ -1,11 +1,28 @@
 ﻿@inject NavigationManager NavigationManager
 
 @using SocialScoresFrontend.Components.Models
-<div style="display:flex">
-	<h4>@Account?.Username</h4>
-	<span>@Account?.SocialScore</span>
+<div class="accountItemWrapper">
+	<span class="flexitem" style="margin-left:10px;"><strong>@Account?.Username</strong></span>
+	<span class="flexitem">@Account?.SocialScore</span>
 	<button class ="btn btn-primary" @onclick="GoToProfile">GoToProfile</button>
 </div>
+
+<style>
+	.accountItemWrapper
+	{
+		display: flex;
+		/* width: auto; */
+		/* width: 300px; */
+		align-items: center;
+		background-color: bisque; 
+		padding: 3px;
+		border-radius:3px;
+	}
+
+	.flexitem{
+		margin-right:10px;
+	}
+</style>
 
 @code {
 	[Parameter]

@@ -6,39 +6,50 @@
 @inject PostRequests PostRequests
 @inject NavigationManager Navigation
 
-<h3>Profile</h3>
-
 @if(loaded != null)
 {
+    <h3>Profile</h3>
+    
     <div>
-        <h4>Account Details</h4>
-        @if(profilePicture != null)
-        {
-            <img src="@profilePicture" alt="Preview" style="max-width: 100%; height: auto;" />
-        }
-        else
-        {
-            <img src="/Unknown.png" alt="Post image" class="post-image" />
-        }
-        <div>
-            <label for="imageUpload">Change Profile Picture</label>
-            <InputFile OnChange="HandleFileSelected" />
-        </div>
+        <div style="display:flex; align-items:center; margin: 20px 0 20px 0;">
+            <!-- Profile picture -->
+            <div style="display:flex; flex-direction:column;">
+                @if (profilePicture != null)
+                {
+                    <img src="@profilePicture" alt="Preview" class="profile-img" />
+                }
+                else
+                {
+                    <img src="/Unknown.png" alt="Post image" class="profile-img" />
+                }
+                <label class="change-profile-picture-label">
+                    Change Profile Picture
+                    <InputFile hidden OnChange="HandleFileSelected" />
+                </label>
+            </div>
 
-        <p><strong>Username:</strong> @loaded?.Username</p>
-        <p><strong>Email:</strong> @loaded?.Email</p>
-        <p><UpDownVoteComponent Account="loaded" /></p>
+            <!--User Data-->
+            <div style="margin-left:20px;">
+                <p><strong>Username:</strong> @loaded?.Username</p>
+                <p><strong>Email:</strong> @loaded?.Email</p>
+            </div>
+
+            <div style="margin-left:50px;">
+                <UpDownVoteComponent Account="loaded" />
+            </div>
+        </div>
     </div>
 
-    <div style="display:flex;">
+    <div style="display:flex; align-items: center;">
+        <h4 style="margin:0 10px 0 0;">User Posts</h4>
         <button class="btn btn-primary" @onclick="NavigateToNewPost">
-            <i class="fa fa-plus"></i> New Post
+            +
         </button>
     </div>
     
     <!-- Posts Section -->
     <div>
-        <h4>User Posts</h4>
+        
         @if (posts != null && posts?.Length != 0)
         {
             foreach (var post in posts)
@@ -73,7 +84,11 @@ else
     protected override async Task OnInitializedAsync()
     {
         Assert.NotNull(Id, "The Id provided to the pofile page was not valid");
+        
         loaded = await AccountRequests.GetAccount(Id!.Value);
+
+        FileData processedProfilePicture = await AccountRequests.GetProfilePicture(Id!.Value);
+        profilePicture = $"data:{processedProfilePicture.MimeType};base64,{Convert.ToBase64String(processedProfilePicture.Data)}";
 
         posts = await PostRequests.GetPostsForAccount(Id.Value);
     }

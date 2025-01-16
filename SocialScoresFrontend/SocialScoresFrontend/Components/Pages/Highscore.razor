@@ -3,14 +3,18 @@
 @using SocialScoresFrontend.Components.Models
 @inject AccountRequests AccountRequests;
 
-<h3>Highscore</h3>
+<h3 style="margin-bottom:10px;">Highscore</h3>
 
 <div style="overflow-y:auto; max-height:800px;">
     @if (accounts != null && accounts.Any())
     {
+        int index = 1;
         @foreach (var item in accounts)
         {
-            <SocialScoresFrontend.Components.Infra.UI.AccountListItemComponent Account="item" />
+            <div style="display:flex; align-items:center;">
+                <strong style="margin-right:5px;">@index.</strong>
+                <span style="flex-grow:1;"><SocialScoresFrontend.Components.Infra.UI.AccountListItemComponent Account="item" /></span>
+            </div>
         }
     }
     else

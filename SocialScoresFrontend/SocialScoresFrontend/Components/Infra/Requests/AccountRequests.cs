@@ -87,18 +87,37 @@ namespace SocialScoresFrontend.Components.Infra.Requests
         {
             FileData fileData = new();
 
-            await client.GetCustom(
-                $"get-profile-picture?account_id={accountId}&size=resized",
-                response =>
-                {
-                    string mimetype = response.Content.Headers.ContentType!.MediaType!;
-                    byte[] data = response.Content.ReadAsByteArrayAsync().Result;
+            try
+            {
+                await client.GetCustom(
+                    $"account/get-profile-picture?account_id={accountId}&size=resized",
+                    response =>
+                    {
+                        string mimetype = response.Content.Headers.ContentType!.MediaType!;
+                        byte[] data = response.Content.ReadAsByteArrayAsync().Result;
 
-                    fileData.FileName = "profilePicture";
-                    fileData.MimeType = mimetype;
-                    fileData.Data = data;
-                }
-            );
+                        fileData.FileName = "profilePicture";
+                        fileData.MimeType = mimetype;
+                        fileData.Data = data;
+                    }
+                );
+            }
+            catch
+            {
+                await client.GetCustom(
+                    $"account/get-profile-picture?account_id={accountId}&size=full",
+                    response =>
+                    {
+                        string mimetype = response.Content.Headers.ContentType!.MediaType!;
+                        byte[] data = response.Content.ReadAsByteArrayAsync().Result;
+
+                        fileData.FileName = "profilePicture";
+                        fileData.MimeType = mimetype;
+                        fileData.Data = data;
+                    }
+                );
+            }
+
 
             return fileData;
         }
