@@ -1,0 +1,129 @@
+﻿@page "/profile/{id:int}";
+@using SocialScoresFrontend.Components.Infra.Requests
+@using SocialScoresFrontend.Components.Infra.Utils
+@using SocialScoresFrontend.Components.Models
+@inject AccountRequests AccountRequests
+@inject PostRequests PostRequests
+@inject NavigationManager Navigation
+
+@if(loaded != null)
+{
+    <h3>Profile</h3>
+    
+    <div>
+        <div style="display:flex; align-items:center; margin: 20px 0 20px 0;">
+            <!-- Profile picture -->
+            <div style="display:flex; flex-direction:column;">
+                @if (profilePicture != null)
+                {
+                    <img src="@profilePicture" alt="Preview" class="profile-img" />
+                }
+                else
+                {
+                    <img src="/Unknown.png" alt="Post image" class="profile-img" />
+                }
+                <label class="change-profile-picture-label">
+                    Change Profile Picture
+                    <InputFile hidden OnChange="HandleFileSelected" />
+                </label>
+            </div>
+
+            <!--User Data-->
+            <div style="margin-left:20px;">
+                <p><strong>Username:</strong> @loaded?.Username</p>
+                <p><strong>Email:</strong> @loaded?.Email</p>
+            </div>
+
+            <div style="margin-left:50px;">
+                <UpDownVoteComponent Account="loaded" />
+            </div>
+        </div>
+    </div>
+
+    <div style="display:flex; align-items: center; margin-bottom:20px;">
+        <h4 style="margin:0 10px 0 0;">User Posts</h4>
+        <button class="btn btn-primary" @onclick="NavigateToNewPost">
+            +
+        </button>
+    </div>
+    
+    <!-- Posts Section -->
+    <div>
+        
+        @if (posts != null && posts?.Length != 0)
+        {
+            foreach (var post in posts)
+            {
+                <div class="post">
+                    @* <img src="/favicon.png" alt="Post image" class="post-image" /> *@
+                    @if(post.Imagedata != null && post.MimeType != null)
+                    {
+                        <img src="@ConvertByteToImageString(post.Imagedata, post.MimeType)" alt="Preview" style="max-width: 100%; height: auto;" />
+                    }
+
+                    <p class="caption">@post.Text</p>
+                    <p class="caption">@post.TimeCreated.ToShortDateString()</p>
+                </div>
+            }
+        }
+        else
+        {
+            <p>No posts available.</p>
+        }
+    </div>
+}
+else
+{
+    <p>Loading...</p>
+}
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Assert.NotNull(Id, "The Id provided to the pofile page was not valid");
+        
+        loaded = await AccountRequests.GetAccount(Id!.Value);
+
+        FileData? processedProfilePicture = await AccountRequests.GetProfilePicture(Id!.Value);
+        if (processedProfilePicture != null)
+            profilePicture = $"data:{processedProfilePicture.MimeType};base64,{Convert.ToBase64String(processedProfilePicture.Data)}";
+
+        posts = await PostRequests.GetPostsForAccount(Id.Value);
+    }
+
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        if (file != null)
+        {
+            FileData fileData = new FileData();
+            fileData.MimeType = file.ContentType;
+            fileData.FileName = file.Name;
+            fileData.Data = new byte[file.Size];
+            await file.OpenReadStream(maxAllowedSize: 1024000).ReadAsync(fileData.Data); // 1 MB max size
+
+			await AccountRequests.UploadProfilePicture(Id!.Value, fileData);
+			FileData processedProfilePicture = await AccountRequests.GetProfilePicture(Id!.Value);
+			profilePicture = $"data:{processedProfilePicture.MimeType};base64,{Convert.ToBase64String(processedProfilePicture.Data)}";
+
+			await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private void NavigateToNewPost()
+    {
+        Navigation.NavigateTo("/newpost/"+Id);
+    }
+
+    private string ConvertByteToImageString(byte[] data, string mimeType)
+    {
+        return $"data:{mimeType};base64,{Convert.ToBase64String(data)}";
+    }
+
+    private Account? loaded;
+    private Post[]? posts;
+    private string? profilePicture;
+}

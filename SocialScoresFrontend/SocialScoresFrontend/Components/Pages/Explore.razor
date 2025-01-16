@@ -1,0 +1,37 @@
+﻿@page "/explore"
+@using SocialScoresFrontend.Components.Infra.Requests
+@using SocialScoresFrontend.Components.Models
+@inject AccountRequests AccountRequests;
+
+<div style="display:flex; align-items:center; margin-bottom:10px;">
+    <h3 style="margin:0 5px 0 0;">Explore</h3>
+    <button class="btn btn-primary" style="padding:5px;" @onclick="@Reroll">reroll</button>
+</div>
+
+<div style="overflow-y:auto; max-height:800px;">
+    @if (accounts != null && accounts.Any())
+    {
+        @foreach (var item in accounts)
+        {
+            <div style="margin-bottom:3px;"><SocialScoresFrontend.Components.Infra.UI.AccountListItemComponent Account="item" /></div>
+        }
+    }
+    else
+    {
+        <p>No items to display</p>
+    }
+</div>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        accounts = await AccountRequests.GetRandomAccounts(10);
+    }
+
+    private async Task Reroll(MouseEventArgs args)
+    {
+        accounts = await AccountRequests.GetRandomAccounts(10);
+    }
+
+    private Account[]? accounts;
+}
